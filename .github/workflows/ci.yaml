@@ -32,8 +32,8 @@ jobs:
         run: make init
       - name: vet and lint
         run: |
-          go vet .
-          go lint .
+          go vet ./src/...
+          go lint ./src/...
 
       - name: run test race with coverage
         run: make coverage-badge
