@@ -23,7 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           go version
-          go get -u golang.org/x/lint/golint
+          go install golang.org/x/lint/golint
 
       - name: checkout the code
         uses: actions/checkout@v3
