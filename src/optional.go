@@ -6,6 +6,7 @@ import (
 	"reflect"
 )
 
+// Type : SomeType | NoneType
 type Type string
 
 const (
@@ -15,11 +16,11 @@ const (
 	NoneType Type = "None"
 )
 
-// NoneValueError : NoneValueError
-var NoneValueError = errors.New("NoneValue presented")
+// ErrorNoneValue : ErrorNoneValue
+var ErrorNoneValue = errors.New("NoneValue presented")
 
-// SomeValueError : SomeValueError
-var SomeValueError = errors.New("SomeValue presented")
+// ErrorSomeValue : ErrorSomeValue
+var ErrorSomeValue = errors.New("SomeValue presented")
 
 // Option : Option type
 type Option[A any] struct {
@@ -62,7 +63,7 @@ func NewOptional[A any](value A) Option[A] {
 // and returns error with NoneValue in case the Value is Nil
 func Some[A any](value A) (Option[A], error) {
 	if isNilOrZeroValue(value) || isPtr(value) {
-		return None[A](), NoneValueError
+		return None[A](), ErrorNoneValue
 	}
 	return Option[A]{value: value, t: SomeType}, nil
 }
@@ -110,7 +111,7 @@ func (o Option[A]) Apply(f func(value A) A) Option[A] {
 func (o Option[A]) Take() (value A, err error) {
 	value = o.value
 	if o.IsNone() {
-		err = NoneValueError
+		err = ErrorNoneValue
 		return
 	}
 	return
@@ -156,7 +157,7 @@ func (o Option[A]) IfSome(f func(value A) A) (A, error) {
 	if o.IsSome() {
 		return f(o.value), nil
 	}
-	return o.value, NoneValueError
+	return o.value, ErrorNoneValue
 }
 
 // IfNone execute f() if the Option is NoneType
@@ -164,7 +165,7 @@ func (o Option[A]) IfNone(f func() A) (A, error) {
 	if o.IsNone() {
 		return f(), nil
 	}
-	return o.value, SomeValueError
+	return o.value, ErrorSomeValue
 }
 
 // Unwrap return the underlying value irrelevant if it is SomeType or NoneType
