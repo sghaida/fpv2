@@ -1,4 +1,4 @@
-package fp
+package src
 
 import (
 	"errors"
@@ -58,10 +58,7 @@ func Some[A any](value A) (Option[A], error) {
 	if isNilOrZeroValue(value) || isPtr(value) {
 		return None[A](), NoneValueError
 	}
-	return Option[A]{
-		value: value,
-		t:     SomeType,
-	}, nil
+	return Option[A]{value: value, t: SomeType}, nil
 }
 
 // None will create an Option of NoneType
@@ -169,6 +166,15 @@ func (o Option[T]) Unwrap() T {
 	return o.Get()
 }
 
+// Flatten :Flatten an Option[Option[A]] --> Option[A]
+func (o Option[A]) Flatten() Option[A] {
+	// if the inner type is also an option Flatten it
+	if o, ok := any(o.Get()).(Option[A]); ok {
+		return o
+	}
+	return o
+}
+
 // String return String representation of the Option
 func (o Option[A]) String() string {
 	if o.IsNone() {
@@ -182,6 +188,11 @@ func (o Option[A]) String() string {
 
 // Mapper is a function that applies on type A and transform it to type B
 type Mapper[A, B any] func(A) B
+
+// Map for an Option[A] apply Mapper for function A --> Any and return Option[Any]
+func (o Option[A]) Map(mapper Mapper[A, any]) Option[any] {
+	return Map(o, mapper)
+}
 
 // Map for an Option[A] apply Mapper for function A --> B and return Option[B]
 func Map[A, B any](option Option[A], mapper Mapper[A, B]) Option[B] {
@@ -197,15 +208,28 @@ func Map[A, B any](option Option[A], mapper Mapper[A, B]) Option[B] {
 // FlatMapper is a function that is applies on type A and return Option[B]
 type FlatMapper[A, B any] func(A) Option[B]
 
+func (o Option[A]) FlatMap(fn FlatMapper[A, any]) Option[any] {
+	return FlatMap(o, fn)
+}
+
 // FlatMap for Option[A] apply mapper function from A--> Option[B] and return Option[B]
+// This function could panic if the mapper is not applicable on A such as in the context of
+// Option[Option[Option[A]]
 func FlatMap[A, B any](option Option[A], mapper FlatMapper[A, B]) Option[B] {
 	if option.IsNone() {
 		return None[B]()
 	}
-	return mapper(option.value)
-}
-
-// Flatten :Flatten an Option[Option[A]] --> Option[A]
-func Flatten[A Option[A]](option Option[Option[A]]) Option[A] {
-	return option.Get()
+	switch value := any(option.value).(type) {
+	case Option[A]:
+		v, ok := any(value).(Option[A])
+		if ok {
+			if v.IsNone() {
+				return None[B]()
+			}
+			return mapper(v.Get())
+		}
+	case A:
+		return mapper(value)
+	}
+	return None[B]()
 }

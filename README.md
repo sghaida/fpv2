@@ -1,18 +1,21 @@
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/sghaida/fpv2/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/sghaida/fpv2/tree/main)
 # Go Functional Library
 
 ## TL;DR
 This is an Opinionated functional library that implements some aspects of **Functional paradigms**, which suppose to increase productivity, and add to **GoLang** the missing beauty of functional programing which i always long for.
 
 ## Lib Primitives
- This Library still work in progress while the entirety of the features is not yet finalized, below is the list of basic Primitives that is currently supported or would be supported in the future, for Detailed Support list please go through the code :D
+The Library still **WIP** while the entirety of the features is not yet finalized, below is the list of basic Primitives that is currently supported or would be supported in the future, for Detailed Support list please go through the code :D
 
-- [x] **[Options](optional.go)** `Some | None` along with all the `Monadic Operations`
+The Library will Include `Mutable` and `Immutable` counterpart collections such as ` Array | Slice | Map | Set `
 
-- [ ] **Either** `Left | Right` along with all `Monadic Operations`
+- [x] **_[Options](src/optional.go)_** `Some | None` along with all the `Monadic Operations`
 
-- [ ] **Mutable | Immutable Set** `Iter | Foreach | Union | Intersect | Add | Remove | Diff | Clone | ToSlice |  Map | FlatMap |  Flatten | Fold | Reduce | Zip | Filter | Add | Remove`
+- [ ] **_Either_** `Left | Right` along with all `Monadic Operations`
 
-- [ ] **Mutable | Immutable Array** applies to `Slices | Arrays` with the following Operations `Iter | Foreach | Map | FlatMap |  Flatten | Fold | Reduce | Zip | ZipWithIndex | Filter | GroupBy | Head | Tail | AddAtIndex | Append | Prepend | ToMap | Clone`
+- [ ] **_Mutable | Immutable Set_** `Iter | Foreach | Union | Intersect | Add | Remove | Diff | Clone | ToSlice |  Map | FlatMap |  Flatten | Fold | Reduce | Zip | Filter | Add | Remove`
 
-- [ ] **Mutable | Immutable Map** applies to `Maps` with the following Operations ` Iter | Foreach | Map | FlatMap |  Flatten | Fold | Reduce | ToSlice | Clone`
+- [ ] **_Mutable | Immutable Array_** applies to `Slices | Arrays` with the following Operations `Iter | Foreach | Map | FlatMap |  Flatten | Fold | Reduce | Zip | ZipWithIndex | Filter | GroupBy | Head | Tail | AddAtIndex | Append | Prepend | ToMap | Clone`
+
+- [ ] **_Mutable | Immutable Map_** applies to `Maps` with the following Operations ` Iter | Foreach | Map | FlatMap |  Flatten | Fold | Reduce | ToSlice | Clone`
 
