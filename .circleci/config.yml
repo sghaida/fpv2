@@ -10,7 +10,7 @@ jobs:
           GO111MODULE: "on"
           GOSUMDB: "off"
           GOPROXY: "direct"
-    working_directory: /go/src/github.com/sghaida/fpv2
+#    working_directory: /go/src/github.com/sghaida/fpv2
     steps:
       - checkout
       - run: go version
