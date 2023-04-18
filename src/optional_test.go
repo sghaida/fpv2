@@ -1,9 +1,10 @@
-package fp
+package src
 
 import (
 	"crypto/sha1"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"strconv"
 	"testing"
 )
 
@@ -818,6 +819,287 @@ func TestOption_String(t *testing.T) {
 	}
 }
 
+func TestOption_Map(t *testing.T) {
+
+	type testData[A, B any] struct {
+		name  string
+		value A
+		fn    Mapper[A, B]
+	}
+
+	var emptySlice []string
+	emptySliceAlt := []string{"some alternative slice"}
+
+	var emptyStr = ""
+	emptyVariableAlt := "some alternative string"
+	tt := []testData[any, any]{
+		{
+			name:  "Some Number to string",
+			value: 10,
+			fn: func(value any) any {
+				return fmt.Sprintf("%v", value)
+			},
+		}, {
+			name:  "Some string to int",
+			value: "saddam",
+			fn: func(value any) any {
+				str := fmt.Sprintf("%s abu ghaida", value)
+				hash := sha1.New()
+				hash.Write([]byte(str))
+				return hash.Size()
+			},
+		}, {
+			name:  "Some array to map",
+			value: []int{1, 2, 3, 4},
+			fn: func(value any) any {
+				m := map[int]int{}
+				for i, value := range value.([]int) {
+					m[i+1] = value
+				}
+				return m
+			},
+		}, {
+			name:  "Some map to array",
+			value: map[int]int{1: 1, 2: 2, 3: 3, 4: 4},
+			fn: func(value any) any {
+				v := value.(map[int]int)
+				var arr []int
+				for i := 0; i < 5; i++ {
+					arr = append(arr, v[i])
+				}
+
+				return arr
+			},
+		}, {
+			name: "Some struct map on name value",
+			value: struct {
+				name string
+				age  int
+			}{
+				name: "saddam",
+				age:  111,
+			},
+			fn: func(value any) any {
+				v := value.(struct {
+					name string
+					age  int
+				})
+
+				return v.name
+			},
+		}, {
+			name:  "Some empty string",
+			value: emptyStr,
+			fn: func(_ any) any {
+				return emptyVariableAlt
+			},
+		}, {
+			name:  "Some emptySlice",
+			value: emptySlice,
+			fn: func(_ any) any {
+				return emptySliceAlt
+			},
+		},
+	}
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			option := NewOptional(tc.value)
+			app := option.Map(tc.fn)
+			if option.IsNone() {
+				assert.True(t, app.IsNone())
+				return
+			}
+			assert.Equal(t, option.t, app.t)
+			assert.Equal(t, app.Get(), tc.fn(option.Unwrap()))
+		})
+	}
+}
+
+func TestOption_Flatten(t *testing.T) {
+
+	type testData[A Option[any]] struct {
+		name     string
+		value    A
+		expected Option[any]
+	}
+
+	tt := []testData[Option[any]]{
+		{
+			name:     "Some Option of Option of Int",
+			value:    NewOptional[any](NewOptional[any](10)),
+			expected: NewOptional[any](10),
+		}, {
+			name:     "Some Option of Int",
+			value:    NewOptional[any](10),
+			expected: NewOptional[any](10),
+		},
+		{
+			name:     "Some Option of Option of string",
+			value:    NewOptional[any](NewOptional[any]("saddam")),
+			expected: NewOptional[any]("saddam"),
+		}, {
+			name:     "Some Option of string",
+			value:    NewOptional[any]("saddam"),
+			expected: NewOptional[any]("saddam"),
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			flattened := tc.value.Flatten()
+			assert.Equal(t, flattened.Get(), tc.expected.Get())
+
+		})
+	}
+}
+
+func TestOption_FlatMap(t *testing.T) {
+	type testData[A any, B Option[any]] struct {
+		name         string
+		value        A
+		fn           func(A any) B
+		expected     Option[any]
+		expectsError bool
+	}
+
+	tt := []testData[any, Option[any]]{
+		{
+			name:         "Some Option of Int",
+			value:        NewOptional[any](10),
+			expected:     NewOptional[any]("11"),
+			expectsError: false,
+			fn: func(a any) Option[any] {
+				sum := a.(int) + 1
+				return NewOptional[any](strconv.Itoa(sum))
+			},
+		}, {
+			name:         "Some Option of Option of Int should return option of string",
+			value:        NewOptional[any](NewOptional[any](10)),
+			expected:     NewOptional[any]("11"),
+			expectsError: false,
+			fn: func(a any) Option[any] {
+				sum := a.(int) + 1
+				return NewOptional[any](strconv.Itoa(sum))
+			},
+		},
+		{
+			name:         "Some Option -> Option -> option of Int should panic",
+			value:        NewOptional[any](NewOptional[any](NewOptional[any](10))),
+			expectsError: true,
+			fn: func(a any) Option[any] {
+				sum := a.(int) + 1
+				return NewOptional[any](strconv.Itoa(sum))
+			},
+		}, {
+			name:         "None",
+			value:        None[any](),
+			expected:     None[any](),
+			expectsError: false,
+			fn: func(a any) Option[any] {
+				sum := a.(int) + 1
+				return NewOptional[any](strconv.Itoa(sum))
+			},
+		},
+		{
+			name:         "Option of None",
+			value:        NewOptional[any](None[any]()),
+			expected:     None[any](),
+			expectsError: false,
+			fn: func(a any) Option[any] {
+				sum := a.(int) + 1
+				return NewOptional[any](strconv.Itoa(sum))
+			},
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.expectsError == true {
+				assert.Panics(t, func() {
+					_ = tc.value.(Option[any]).FlatMap(tc.fn)
+				})
+				return
+			}
+
+			result := tc.value.(Option[any]).FlatMap(tc.fn)
+			assert.Equal(t, result.Get(), tc.expected.Get())
+		})
+	}
+}
+func TestFlatMap(t *testing.T) {
+	type testData[A any, B Option[any]] struct {
+		name         string
+		value        A
+		fn           func(A any) B
+		expected     Option[any]
+		expectsError bool
+	}
+
+	tt := []testData[any, Option[any]]{
+		{
+			name:         "Some Option of Int",
+			value:        NewOptional[any](10),
+			expected:     NewOptional[any]("11"),
+			expectsError: false,
+			fn: func(a any) Option[any] {
+				sum := a.(int) + 1
+				return NewOptional[any](strconv.Itoa(sum))
+			},
+		}, {
+			name:         "Some Option of Option of Int should return option of string",
+			value:        NewOptional[any](NewOptional[any](10)),
+			expected:     NewOptional[any]("11"),
+			expectsError: false,
+			fn: func(a any) Option[any] {
+				sum := a.(int) + 1
+				return NewOptional[any](strconv.Itoa(sum))
+			},
+		},
+		{
+			name:         "Some Option -> Option -> option of Int should panic",
+			value:        NewOptional[any](NewOptional[any](NewOptional[any](10))),
+			expectsError: true,
+			fn: func(a any) Option[any] {
+				sum := a.(int) + 1
+				return NewOptional[any](strconv.Itoa(sum))
+			},
+		}, {
+			name:         "None",
+			value:        None[any](),
+			expected:     None[any](),
+			expectsError: false,
+			fn: func(a any) Option[any] {
+				sum := a.(int) + 1
+				return NewOptional[any](strconv.Itoa(sum))
+			},
+		},
+		{
+			name:         "Option of None",
+			value:        NewOptional[any](None[any]()),
+			expected:     None[any](),
+			expectsError: false,
+			fn: func(a any) Option[any] {
+				sum := a.(int) + 1
+				return NewOptional[any](strconv.Itoa(sum))
+			},
+		},
+	}
+
+	for _, tc := range tt {
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.expectsError == true {
+				assert.Panics(t, func() {
+					_ = FlatMap(tc.value.(Option[any]), tc.fn)
+				})
+				return
+			}
+
+			result := FlatMap(tc.value.(Option[any]), tc.fn)
+			assert.Equal(t, result.Get(), tc.expected.Get())
+		})
+	}
+}
+
 func TestMap(t *testing.T) {
 
 	type testData[A, B any] struct {
@@ -913,3 +1195,44 @@ func TestMap(t *testing.T) {
 		})
 	}
 }
+
+//func TestFlatMap(t *testing.T) {
+//
+//	type testData[A Option[any]] struct {
+//		name     string
+//		value    A
+//		expected Option[any]
+//		fn
+//	}
+//
+//	tt := []testData[Option[any]]{
+//		{
+//			name:     "Some Option of Option of Int",
+//			value:    NewOptional[any](NewOptional[any](10)),
+//			fn
+//			expected: NewOptional[any](10),
+//		}, {
+//			name:     "Some Option of Int",
+//			value:    NewOptional[any](10),
+//			expected: NewOptional[any](10),
+//		},
+//		{
+//			name:     "Some Option of Option of string",
+//			value:    NewOptional[any](NewOptional[any]("saddam")),
+//			expected: NewOptional[any]("saddam"),
+//		}, {
+//			name:     "Some Option of string",
+//			value:    NewOptional[any]("saddam"),
+//			expected: NewOptional[any]("saddam"),
+//		},
+//	}
+//
+//	for _, tc := range tt {
+//		t.Run(tc.name, func(t *testing.T) {
+//			flattened := Flatten(tc.value)
+//			assert.Equal(t, flattened.Get(), tc.expected.Get())
+//
+//		})
+//	}
+//
+//}
