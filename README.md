@@ -1,4 +1,5 @@
 # Go Functional Library
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/300c2b8ca3214f72928ede125da5f680)](https://app.codacy.com/gh/sghaida/fpv2?utm_source=github.com&utm_medium=referral&utm_content=sghaida/fpv2&utm_campaign=Badge_Grade)
 [![ci](https://github.com/sghaida/fpv2/actions/workflows/ci.yaml/badge.svg)](https://github.com/sghaida/fpv2/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/sghaida/fpv2/branch/main/graph/badge.svg?token=T7LTPQKQIR)](https://codecov.io/gh/sghaida/fpv2)
 
