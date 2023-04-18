@@ -1,7 +1,7 @@
 # Go Functional Library
 [![ci](https://github.com/sghaida/fpv2/actions/workflows/ci.yaml/badge.svg)](https://github.com/sghaida/fpv2/actions/workflows/ci.yaml)
 [![codecov](https://codecov.io/gh/sghaida/fpv2/branch/main/graph/badge.svg?token=T7LTPQKQIR)](https://codecov.io/gh/sghaida/fpv2)
-
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/2d9baa3db6cb4f9db65020013632dc1a)](https://app.codacy.com/gh/sghaida/fpv2/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 ## TL;DR
 This is an Opinionated functional library that implements some aspects of **Functional paradigms**, which suppose to increase productivity, and add to **GoLang** the missing beauty of functional programing which i always long for.

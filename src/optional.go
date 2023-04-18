@@ -9,13 +9,19 @@ import (
 type Type string
 
 const (
+	// SomeType : Some
 	SomeType Type = "Some"
+	// NoneType : None
 	NoneType Type = "None"
 )
 
+// NoneValueError : NoneValueError
 var NoneValueError = errors.New("NoneValue presented")
+
+// SomeValueError : SomeValueError
 var SomeValueError = errors.New("SomeValue presented")
 
+// Option : Option type
 type Option[A any] struct {
 	value A
 	t     Type
@@ -208,6 +214,9 @@ func Map[A, B any](option Option[A], mapper Mapper[A, B]) Option[B] {
 // FlatMapper is a function that is applies on type A and return Option[B]
 type FlatMapper[A, B any] func(A) Option[B]
 
+// FlatMap for Option[A] apply mapper function from A--> Option[B] and return Option[B]
+// This function could panic if the mapper is not applicable on A such as in the context of
+// Option[Option[Option[A]]
 func (o Option[A]) FlatMap(fn FlatMapper[A, any]) Option[any] {
 	return FlatMap(o, fn)
 }

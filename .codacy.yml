@@ -1,0 +1,26 @@
+engines:
+  duplication:
+    exclude_paths:
+      - '**_test.go'
+  coverage:
+    exclude_paths:
+      - '**/mocks/*.go'
+      - '**/mock_*.go'
+      - '*_test.go'
+      - 'cmd/**'
+exclude_paths:
+  - .gitignore
+  - .github/**
+  - go.sum
+  - go.mod
+  - Makefile
+  - bin/**
+  - script/**
+  - schema/**
+  - seed/**
+  - '*.md'
+  - '**/*.md'
+  - '*_test.go'
+  - '**/*_test.go'
+  - '**/mocks/*.go'
+  - '**/mock_*.go'
