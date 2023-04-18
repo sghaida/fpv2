@@ -1,5 +1,5 @@
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/sghaida/fpv2/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/sghaida/fpv2/tree/main)
 # Go Functional Library
+[![ci](https://github.com/sghaida/fpv2/actions/workflows/ci.yaml/badge.svg)](https://github.com/sghaida/fpv2/actions/workflows/ci.yaml)
 
 ## TL;DR
 This is an Opinionated functional library that implements some aspects of **Functional paradigms**, which suppose to increase productivity, and add to **GoLang** the missing beauty of functional programing which i always long for.

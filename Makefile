@@ -8,20 +8,22 @@ GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GORUN=$(GOCMD) run
 
-.PHONY: build test clean init coverage
+.PHONY: build clean-test test vet init coverage-badge
 
 init:
 	$(GOCMD) mod download
 
-test:
+test: vet
 	$(GOTEST)  -v ./src/...
 
-test-race:
+clean-test:
+	$(GOCLEAN) -testcache
+
+test-race: clean-test
 	$(GOTEST) --race -v ./src/...
 
-coverage:
-	$(GOTEST)  ./src/... -coverprofile cover.out
-	go tool cover -html=./src/cover.out
+vet:
+	$(GOCMD) vet ./src/...
 
 coverage-badge:
-	gopherbadger -md="README.md"
+	$(GOTEST) -race -coverprofile=coverage.txt -covermode=atomic ./...
