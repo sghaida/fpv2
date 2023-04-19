@@ -1,8 +1,9 @@
-package src
+package options
 
 import (
 	"errors"
 	"fmt"
+	"fp/src/utils"
 )
 
 // Type : SomeType | NoneType
@@ -29,7 +30,7 @@ type Option[A any] struct {
 
 // NewOptional create new Option
 func NewOptional[A any](value A) Option[A] {
-	if isNilOrZeroValue(value) || isPtr(value) {
+	if utils.IsNilOrZeroValue(value) || utils.IsPtr(value) {
 		return Option[A]{t: NoneType}
 	}
 	return Option[A]{value: value, t: SomeType}
@@ -38,7 +39,7 @@ func NewOptional[A any](value A) Option[A] {
 // Some will create Option of SomeType in case the value is not Nil
 // and returns error with NoneValue in case the Value is Nil
 func Some[A any](value A) (Option[A], error) {
-	if isNilOrZeroValue(value) || isPtr(value) {
+	if utils.IsNilOrZeroValue(value) || utils.IsPtr(value) {
 		return None[A](), ErrorNoneValue
 	}
 	return Option[A]{value: value, t: SomeType}, nil
@@ -102,9 +103,9 @@ func (o Option[A]) TakeOr(value A) A {
 }
 
 // TakeOrElse return the Value in the context of SomeType and applying function f() and return in the context of NoneType
-func (o Option[A]) TakeOrElse(f func() A) A {
+func (o Option[A]) TakeOrElse(fn func() A) A {
 	if o.IsNone() {
-		return f()
+		return fn()
 	}
 	return o.value
 }
@@ -118,9 +119,9 @@ func (o Option[A]) Or(value Option[A]) Option[A] {
 }
 
 // OrElse return Original Option in the context of SomeType or return f()  in the context of NoneType
-func (o Option[A]) OrElse(f func() Option[A]) Option[A] {
+func (o Option[A]) OrElse(fn func() Option[A]) Option[A] {
 	if o.IsNone() {
-		return f()
+		return fn()
 	}
 	return o
 }
@@ -137,9 +138,9 @@ func (o Option[A]) IfSome(f func(value A) A) (A, error) {
 }
 
 // IfNone execute f() if the Option is NoneType
-func (o Option[A]) IfNone(f func() A) (A, error) {
+func (o Option[A]) IfNone(fn func() A) (A, error) {
 	if o.IsNone() {
-		return f(), nil
+		return fn(), nil
 	}
 	return o.value, ErrorSomeValue
 }
@@ -169,16 +170,13 @@ func (o Option[A]) String() string {
 	return fmt.Sprintf("Some[%v]", o.value)
 }
 
-// Mapper is a function that applies on type A and transform it to type B
-type Mapper[A, B any] func(A) B
-
 // Map for an Option[A] apply Mapper for function A --> Any and return Option[Any]
-func (o Option[A]) Map(mapper Mapper[A, any]) Option[any] {
+func (o Option[A]) Map(mapper utils.Mapper[A, any]) Option[any] {
 	return Map(o, mapper)
 }
 
 // Map for an Option[A] apply Mapper for function A --> B and return Option[B]
-func Map[A, B any](option Option[A], mapper Mapper[A, B]) Option[B] {
+func Map[A, B any](option Option[A], mapper utils.Mapper[A, B]) Option[B] {
 	if option.IsNone() {
 		return None[B]()
 	}
@@ -188,20 +186,20 @@ func Map[A, B any](option Option[A], mapper Mapper[A, B]) Option[B] {
 	return someOpt
 }
 
-// FlatMapper is a function that is applies on type A and return Option[B]
-type FlatMapper[A, B any] func(A) Option[B]
+// OptionFlatMapper is a function that is applies on type A and return Option[B]
+type OptionFlatMapper[A, B any] func(A) Option[B]
 
 // FlatMap for Option[A] apply mapper function from A--> Option[B] and return Option[B]
 // This function could panic if the mapper is not applicable on A such as in the context of
 // Option[Option[Option[A]]
-func (o Option[A]) FlatMap(fn FlatMapper[A, any]) Option[any] {
+func (o Option[A]) FlatMap(fn OptionFlatMapper[A, any]) Option[any] {
 	return FlatMap(o, fn)
 }
 
 // FlatMap for Option[A] apply mapper function from A--> Option[B] and return Option[B]
 // This function could panic if the mapper is not applicable on A such as in the context of
 // Option[Option[Option[A]]
-func FlatMap[A, B any](option Option[A], mapper FlatMapper[A, B]) Option[B] {
+func FlatMap[A, B any](option Option[A], mapper OptionFlatMapper[A, B]) Option[B] {
 	if option.IsNone() {
 		return None[B]()
 	}

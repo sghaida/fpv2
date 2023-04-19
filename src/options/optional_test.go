@@ -1,8 +1,9 @@
-package src
+package options
 
 import (
 	"crypto/sha1"
 	"fmt"
+	"fp/src/utils"
 	"github.com/stretchr/testify/assert"
 	"strconv"
 	"testing"
@@ -824,7 +825,7 @@ func TestOption_Map(t *testing.T) {
 	type testData[A, B any] struct {
 		name  string
 		value A
-		fn    Mapper[A, B]
+		fn    utils.Mapper[A, B]
 	}
 
 	var emptySlice []string
