@@ -6,6 +6,8 @@ import (
 	"fp/src/utils"
 )
 
+// TODO implement test
+
 // typeSide identifies if Either is left or isRight
 type typeSide string
 
@@ -31,23 +33,23 @@ type Either[A, B any] struct {
 }
 
 // Left create Either from Left value
-func Left[A any](value A) Either[A, any] {
-	return Either[A, any]{
+func Left[A, B any](value A) Either[A, B] {
+	return Either[A, B]{
 		left: value,
 		side: isLeftSided,
 	}
 }
 
 // Right create Either from Right value if value is presented and Left if Nil or a pointer
-func Right[A any](value A) Either[any, A] {
+func Right[A, B any](value B) Either[A, B] {
 
 	if utils.IsNilOrZeroValue(value) || utils.IsPtr(value) {
-		return Either[any, A]{
-			left: ErrorLeftValue,
+		return Either[A, B]{
+			left: any(ErrorLeftValue),
 			side: isLeftSided,
 		}
 	}
-	return Either[any, A]{
+	return Either[A, B]{
 		right: value,
 		side:  isRightSided,
 	}
@@ -143,13 +145,10 @@ func (e Either[A, B]) OrElse(fn func() Either[A, B]) Either[A, B] {
 func (e Either[A, B]) Map(mapper utils.Mapper[B, any]) Either[A, any] {
 	switch e.side {
 	case isLeftSided:
-		return Left(e.left)
+		return Left[A, any](e.left)
 	default:
 		value := mapper(e.right)
-		return Either[A, any]{
-			right: value,
-			side:  isRightSided,
-		}
+		return Right[A, any](value)
 	}
 }
 

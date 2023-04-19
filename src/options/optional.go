@@ -3,6 +3,7 @@ package options
 import (
 	"errors"
 	"fmt"
+	"fp/src/either"
 	"fp/src/utils"
 )
 
@@ -216,4 +217,13 @@ func FlatMap[A, B any](option Option[A], mapper OptionFlatMapper[A, B]) Option[B
 		return mapper(value)
 	}
 	return None[B]()
+}
+
+// ToEither Converts Option to Either if None => Left, if Some => Right
+// TODO implement test
+func (o Option[A]) ToEither() either.Either[any, A] {
+	if o.IsNone() {
+		return either.Left[any, A](nil)
+	}
+	return either.Right[any, A](o.value)
 }
