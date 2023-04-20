@@ -2,6 +2,7 @@ package iter
 
 import "errors"
 
+// RangeIter definition of RangeIter
 type RangeIter[A Number] interface {
 	Size() int
 	Iter[A]

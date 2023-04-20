@@ -1,5 +1,6 @@
 package iter
 
+// EmptyIter definition of EmptyIter
 type EmptyIter[A any] interface {
 	Iter[A]
 	Size() int
