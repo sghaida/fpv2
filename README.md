@@ -13,7 +13,7 @@ The Library will Include `Mutable` and `Immutable` counterpart collections such 
 
 - [x] **_[Options](src/optional.go)_** `Some | None` along with all the `Monadic Operations`
 
-- [ ] **_Either_** `Left | Right` along with all `Monadic Operations`
+- [x] **_[Either](src/either.go)_** `Left | Right` along with all `Monadic Operations`
 
 - [ ] **_Mutable | Immutable Set_** `Iter | Foreach | Union | Intersect | Add | Remove | Diff | Clone | ToSlice |  Map | FlatMap |  Flatten | Fold | Reduce | Zip | Filter | Add | Remove`
 

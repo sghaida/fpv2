@@ -323,7 +323,7 @@ func TestEither_FlatMap(t *testing.T) {
 		assert.Equal(t, fr.left, errors.New("missing value"))
 	})
 
-	t.Run("right side 2 level", func(t *testing.T) {
+	t.Run("right side 2 level with flatten", func(t *testing.T) {
 		innerR := Right[error, int](10)
 		r := Right[error, Either[error, int]](innerR)
 		fr := r.FlatMap(func(value Either[error, int]) Either[error, any] {
@@ -338,7 +338,7 @@ func TestEither_FlatMap(t *testing.T) {
 		assert.Equal(t, fr.left, nil)
 	})
 
-	t.Run("left side 2 level", func(t *testing.T) {
+	t.Run("left side 2 level with flatten", func(t *testing.T) {
 		r := Left[error, int](errors.New("missing value"))
 		rl := Right[error, Either[error, int]](r)
 		fr := rl.FlatMap(func(value Either[error, int]) Either[error, any] {
