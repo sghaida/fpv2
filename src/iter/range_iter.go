@@ -30,17 +30,23 @@ func Range[A Number](start, end, step A) (RangeIter[A], error) {
 	}, nil
 }
 
+// HasNext check if there is next element
+func (iter *rangeIter[A]) HasNext() bool {
+	return iter.start+iter.step <= iter.end
+}
+
 // Next return the current step in the Iter
 // on success => current step in the Iter, true
 // on failure => return zero value of the Type and false
-func (iter *rangeIter[A]) Next() (A, bool) {
-	if iter.start >= iter.end {
+func (iter *rangeIter[A]) Next() A {
+	if !iter.HasNext() {
 		var value A
-		return value, false
+		return value
 	}
+
 	loc := iter.start
 	iter.start += iter.step
-	return loc, true
+	return loc
 }
 
 // Count return the size of the iter

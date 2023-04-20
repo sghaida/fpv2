@@ -13,10 +13,15 @@ func Empty[A any]() EmptyIter[A] {
 	return emptyIter[A]{}
 }
 
+// HasNext check if there is next element
+func (e emptyIter[A]) HasNext() bool {
+	return false
+}
+
 // Next return the zero value of the type with false, since its empty
-func (e emptyIter[A]) Next() (A, bool) {
+func (e emptyIter[A]) Next() A {
 	var defaultValue A
-	return defaultValue, false
+	return defaultValue
 }
 
 // Count return the count which is zero

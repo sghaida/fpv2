@@ -10,6 +10,7 @@ type Number interface {
 // Next => to return current value
 // Count => to return the size of the iter
 type Iter[A any] interface {
-	Next() (A, bool)
+	Next() A
+	HasNext() bool
 	Count() int
 }

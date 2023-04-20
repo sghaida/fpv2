@@ -15,6 +15,12 @@ The Library will Include `Mutable` and `Immutable` counterpart collections such 
 
 - [x] **_[Either](src/either.go)_** `Left | Right` along with all `Monadic Operations`
 
+- [x] **_[iter](src/iter)_** 
+  - [x] **_[EmptyIter](src/iter/empty_iter.go)_** `Next | HasNext | Count | Size`
+  - [x] **_[RangeIter](src/iter/range_iter.go)_** `Next | | HasNext | Count | Size | Take`
+  - [ ] **_[SliceIter](src/iter)_**  `Next | HasNext | Count | Size | FromSlice | ToSlice | Fold | Map | Reduce | Take | Drop | Slice | Filter | TakeWhile | DropWhile | Foreach | Contains `
+  - [ ] **_[MapIter](src/iter)_**  `Next | HasNext | Count | Size | FromMap | ToMap | Fold | Map | Reduce | TakeWhile | DropWhile | Foreach | Contains`
+
 - [ ] **_Mutable | Immutable Set_** `Iter | Foreach | Union | Intersect | Add | Remove | Diff | Clone | ToSlice |  Map | FlatMap |  Flatten | Fold | Reduce | Zip | Filter | Add | Remove`
 
 - [ ] **_Mutable | Immutable Array_** applies to `Slices | Arrays` with the following Operations `Iter | Foreach | Map | FlatMap |  Flatten | Fold | Reduce | Zip | ZipWithIndex | Filter | GroupBy | Head | Tail | AddAtIndex | Append | Prepend | ToMap | Clone`
