@@ -1,4 +1,4 @@
-package options
+package src
 
 import (
 	"crypto/sha1"
@@ -1090,12 +1090,12 @@ func TestFlatMap(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			if tc.expectsError == true {
 				assert.Panics(t, func() {
-					_ = FlatMap(tc.value.(Option[any]), tc.fn)
+					_ = OptionFlatMap(tc.value.(Option[any]), tc.fn)
 				})
 				return
 			}
 
-			result := FlatMap(tc.value.(Option[any]), tc.fn)
+			result := OptionFlatMap(tc.value.(Option[any]), tc.fn)
 			assert.Equal(t, result.Get(), tc.expected.Get())
 		})
 	}
@@ -1195,4 +1195,35 @@ func TestMap(t *testing.T) {
 			assert.Equal(t, app.Get(), tc.fn(option.Unwrap()))
 		})
 	}
+}
+
+func TestOption_ToEither(t *testing.T) {
+	none := None[any]()
+	someNum, _ := Some[int](10)
+
+	lValue := none.ToEither()
+	rValue := someNum.ToEither()
+
+	// Left value checks
+	assert.IsType(t, Either[any, any]{}, lValue)
+	assert.True(t, lValue.IsLeft())
+
+	lv, err := lValue.TakeLeft()
+	assert.NoError(t, err)
+	assert.IsType(t, ErrorLeftValue, lv)
+	assert.Equal(t, lv, ErrorLeftValue)
+	lv, err = lValue.TakeRight()
+	assert.Error(t, err)
+
+	// right value checks
+	assert.IsType(t, Either[any, int]{}, rValue)
+	assert.True(t, rValue.IsRight())
+
+	rv, err := rValue.TakeRight()
+	assert.NoError(t, err)
+	assert.IsType(t, 10, rv)
+	assert.Equal(t, rv, 10)
+	_, err = rValue.TakeLeft()
+	assert.Error(t, err)
+
 }
