@@ -1,8 +1,7 @@
-package either
+package src
 
 import (
 	"errors"
-	"fp/src/options"
 	"fp/src/utils"
 )
 
@@ -19,12 +18,12 @@ const (
 var (
 	// ErrorLeftValue if left value is being passed to right
 	ErrorLeftValue  = errors.New("left Value is presented")
-	ErrorRightValue = errors.New("left Value is presented")
+	ErrorRightValue = errors.New("right Value is presented")
 )
 
 // Either is composite type contains left[A] and right[B]
 // left usually used to propagate errors, while right to propagate values
-// Please note Either is right biased so operations such as Map and FlatMap will be applied on the right
+// Please note Either is right biased so operations such as Map and OptionFlatMap will be applied on the right
 // and if it is left value then the left will return unchanged
 type Either[A, B any] struct {
 	left  A
@@ -45,7 +44,7 @@ func Right[A, B any](value B) Either[A, B] {
 
 	if utils.IsNilOrZeroValue(value) || utils.IsPtr(value) {
 		return Either[A, B]{
-			left: any(ErrorLeftValue),
+			left: any(ErrorLeftValue).(A),
 			side: isLeftSided,
 		}
 	}
@@ -80,9 +79,15 @@ func (e Either[A, B]) Unwrap() (B, A) {
 
 // Swap swaps right and left values
 func (e Either[A, B]) Swap() Either[B, A] {
+	side := isRightSided
+	if e.side == isRightSided {
+		side = isLeftSided
+	}
+
 	return Either[B, A]{
 		left:  e.right,
 		right: e.left,
+		side:  side,
 	}
 }
 
@@ -91,7 +96,9 @@ func (e Either[A, B]) TakeLeft() (A, error) {
 	if e.IsLeft() {
 		return e.left, nil
 	}
-	return any(nil), ErrorRightValue
+
+	var v A
+	return v, ErrorRightValue
 }
 
 // TakeRight Return Right if presented and error if not
@@ -99,7 +106,8 @@ func (e Either[A, B]) TakeRight() (B, error) {
 	if e.IsRight() {
 		return e.right, nil
 	}
-	return any(nil), ErrorLeftValue
+	var v B
+	return v, ErrorLeftValue
 }
 
 // Take Return Right if presented and error if not
@@ -177,32 +185,17 @@ func (e Either[A, B]) Exists(fn utils.Predicate[B]) bool {
 	return fn(e.right)
 }
 
-// Flatten flats up Either
-// e.g.
-//
-//	Either[A, B] right => Either[any, B] right
-//	Either[A, Either[B, C]] right -> right  => Either[any, C] right
-//	Either[A, Either[B, C]] right -> left  => Either[B, any] left
-//	Either[A, B] left => Either [A, C] left
-//
-// this function will panic if you get more than 2 levels of Either
-// for such a case please use flatten multiple times
-func (e Either[A, B]) Flatten() Either[A, any] {
-	var mapper FlatMapperFn[A, B, any] = func(value B) Either[A, any] {
-		return Either[A, any]{
-			side:  isRightSided,
-			right: value,
-		}
-	}
-	return e.FlatMap(mapper)
-}
+type flatten[A, B any] func(value B) Either[A, any]
 
 // FlatMapperFn function definition that takes Right value and apply the function
 type FlatMapperFn[A, B, C any] func(value B) Either[A, C]
 
+// EitherFlatMapFn function definition that takes Right value and apply the function
+type EitherFlatMapFn[A, B, C any] func(value B) Either[A, C]
+
 // FlatMap takes an Either and function that applies on Right
 // if the Either IsRight then it returns Either of Right and if Left returns the Either of Left as Is
-// if FlatMap is not applicable will return Left
+// if OptionFlatMap is not applicable will return Left
 // e.g.
 //
 //	Either[A, B] right => Either[any, B] right
@@ -212,13 +205,13 @@ type FlatMapperFn[A, B, C any] func(value B) Either[A, C]
 //
 // this function will panic if you get more than 2 levels of Either
 // for such a case please use Flatten multiple times
-func (e Either[A, B]) FlatMap(mapper FlatMapperFn[A, B, any]) Either[A, any] {
-	return FlatMap(e, mapper)
+func (e Either[A, B]) FlatMap(fn EitherFlatMapFn[A, B, any]) Either[A, any] {
+	return EitherFlatMap(e, fn)
 }
 
-// FlatMap takes an Either and function that applies on Right
+// EitherFlatMap takes an Either and function that applies on Right
 // if the Either IsRight then it returns Either of Right and if Left returns the Either of Left as Is
-// if FlatMap is not applicable will return Left
+// if OptionFlatMap is not applicable will return Left
 // e.g.
 //
 //	Either[A, B] right => Either[any, B] right
@@ -228,55 +221,23 @@ func (e Either[A, B]) FlatMap(mapper FlatMapperFn[A, B, any]) Either[A, any] {
 //
 // this function will panic if you get more than 2 levels of Either
 // for such a case please use Flatten multiple times
-func FlatMap[A, B, C any](e Either[A, B], mapper FlatMapperFn[A, B, C]) Either[A, C] {
+func EitherFlatMap[A, B, C any](e Either[A, B], fn EitherFlatMapFn[A, B, C]) Either[A, C] {
 	// Evaluate left side
 	if e.IsLeft() {
-		switch typedValue := any(e.left).(type) {
-		case Either[any, any]:
-			if typedValue.IsLeft() {
-				return Either[A, C]{
-					left: typedValue.left,
-					side: isLeftSided,
-				}
-			}
-		case A:
-			return Either[A, C]{
-				side: isLeftSided,
-				left: typedValue,
-			}
-
-		}
+		return Left[A, C](e.left)
 	}
-
-	switch typedValue := any(e.right).(type) {
-	case Either[any, any]:
-		if typedValue.IsLeft() {
-			return Either[A, C]{
-				left: typedValue.left,
-				side: isLeftSided,
-			}
-		}
-		return mapper(typedValue.right)
-
-	case B:
-		return mapper(typedValue)
-	}
-	// default will return left due to not being able to apply flatmap
-	return Either[A, C]{
-		side: isLeftSided,
-		left: e.left,
-	}
+	return fn(any(e.right).(B))
 }
 
 // ToOption converts to Option if IsLeft => None[any]() , if IsRight then Some[B](value)
-func (e Either[A, B]) ToOption() options.Option[any] {
+func (e Either[A, B]) ToOption() Option[B] {
 	if e.IsRight() {
-		some, err := options.Some[any](e.right)
+		some, err := Some[B](e.right)
 		// can fail due to passing nil or pointers
 		if err != nil {
-			return options.None[any]()
+			return None[B]()
 		}
-		return some
+		return any(some).(Option[B])
 	}
-	return options.None[any]()
+	return None[B]()
 }

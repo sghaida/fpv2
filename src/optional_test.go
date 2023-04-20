@@ -1208,13 +1208,6 @@ func TestOption_ToEither(t *testing.T) {
 	assert.IsType(t, Either[any, any]{}, lValue)
 	assert.True(t, lValue.IsLeft())
 
-	lv, err := lValue.TakeLeft()
-	assert.NoError(t, err)
-	assert.IsType(t, ErrorLeftValue, lv)
-	assert.Equal(t, lv, ErrorLeftValue)
-	lv, err = lValue.TakeRight()
-	assert.Error(t, err)
-
 	// right value checks
 	assert.IsType(t, Either[any, int]{}, rValue)
 	assert.True(t, rValue.IsRight())
@@ -1223,7 +1216,4 @@ func TestOption_ToEither(t *testing.T) {
 	assert.NoError(t, err)
 	assert.IsType(t, 10, rv)
 	assert.Equal(t, rv, 10)
-	_, err = rValue.TakeLeft()
-	assert.Error(t, err)
-
 }

@@ -1,9 +1,8 @@
-package options
+package src
 
 import (
 	"errors"
 	"fmt"
-	"fp/src/either"
 	"fp/src/utils"
 )
 
@@ -187,20 +186,20 @@ func Map[A, B any](option Option[A], mapper utils.Mapper[A, B]) Option[B] {
 	return someOpt
 }
 
-// OptionFlatMapper is a function that is applies on type A and return Option[B]
-type OptionFlatMapper[A, B any] func(A) Option[B]
+// OptionFlatMapperFn is a function that is applies on type A and return Option[B]
+type OptionFlatMapperFn[A, B any] func(A) Option[B]
 
 // FlatMap for Option[A] apply mapper function from A--> Option[B] and return Option[B]
 // This function could panic if the mapper is not applicable on A such as in the context of
 // Option[Option[Option[A]]
-func (o Option[A]) FlatMap(fn OptionFlatMapper[A, any]) Option[any] {
-	return FlatMap(o, fn)
+func (o Option[A]) FlatMap(fn OptionFlatMapperFn[A, any]) Option[any] {
+	return OptionFlatMap(o, fn)
 }
 
-// FlatMap for Option[A] apply mapper function from A--> Option[B] and return Option[B]
+// OptionFlatMap for Option[A] apply mapper function from A--> Option[B] and return Option[B]
 // This function could panic if the mapper is not applicable on A such as in the context of
 // Option[Option[Option[A]]
-func FlatMap[A, B any](option Option[A], mapper OptionFlatMapper[A, B]) Option[B] {
+func OptionFlatMap[A, B any](option Option[A], mapper OptionFlatMapperFn[A, B]) Option[B] {
 	if option.IsNone() {
 		return None[B]()
 	}
@@ -220,10 +219,9 @@ func FlatMap[A, B any](option Option[A], mapper OptionFlatMapper[A, B]) Option[B
 }
 
 // ToEither Converts Option to Either if None => Left, if Some => Right
-// TODO implement test
-func (o Option[A]) ToEither() either.Either[any, A] {
+func (o Option[A]) ToEither() Either[any, A] {
 	if o.IsNone() {
-		return either.Left[any, A](nil)
+		return Left[any, A](ErrorLeftValue)
 	}
-	return either.Right[any, A](o.value)
+	return Right[any, A](o.value)
 }
