@@ -17,7 +17,7 @@ The Library will Include `Mutable` and `Immutable` counterpart collections such 
 
 - [x] **_[iter](src/iter)_** 
   - [x] **_[EmptyIter](src/iter/empty_iter.go)_** `Next | HasNext | Count | Size`
-  - [x] **_[RangeIter](src/iter/range_iter.go)_** `Next | | HasNext | Count | Size`
+  - [x] **_[RangeIter](src/iter/range_iter.go)_** `Next | HasNext | Count | Size`
   - [ ] **_[SliceIter](src/iter)_**  `Next | HasNext | Count | Size | FromSlice | ToSlice | Fold | Map | Reduce | Take | Drop | Slice | Filter | TakeWhile | DropWhile | Foreach | Contains `
   - [ ] **_[MapIter](src/iter)_**  `Next | HasNext | Count | Size | FromMap | ToMap | Fold | Map | Reduce | TakeWhile | DropWhile | Foreach | Contains`
 
