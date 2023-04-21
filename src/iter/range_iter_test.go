@@ -52,6 +52,32 @@ func TestRange(t *testing.T) {
 		next := iter.Next()
 		assert.Equal(t, next, 0)
 		assert.Equal(t, iter.Count(), 0)
+		assert.Equal(t, iter.Size(), 0)
 	})
 
+}
+
+func TestRangeIter_Take(t *testing.T) {
+	t.Run("start + n <= end", func(t *testing.T) {
+		iter, _ := Range[int](0, 5, 1)
+		iter.Next()
+		remaining := iter.Take(4, 1)
+		assert.Equal(t, remaining.Size(), 4)
+		value := iter.Next()
+		assert.Equal(t, value, 1)
+	})
+
+	t.Run("start +n > end", func(t *testing.T) {
+		iter, _ := Range[int](0, 4, 1)
+		iter.Next()
+		remaining := iter.Take(7, 1)
+		assert.Equal(t, remaining.Size(), 3)
+		value := iter.Next()
+		assert.Equal(t, value, 1)
+		//consume to end
+		remaining.Next()
+		remaining.Next()
+		remaining.Next()
+		assert.Equal(t, iter.Size(), 0)
+	})
 }
