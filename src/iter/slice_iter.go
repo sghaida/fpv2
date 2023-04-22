@@ -1,8 +1,7 @@
 package iter
 
-// SliceIter definition of Slice Iterator
-type SliceIter[A any] interface {
-	Iter[A]
+// SliceOps include the operations that can be done on a SliceIter
+type SliceOps[A any] interface {
 	ToSlice() []A
 	Take(n int) SliceIter[A]
 	Filter(fn func(A) bool) SliceIter[A]
@@ -11,6 +10,12 @@ type SliceIter[A any] interface {
 	Fold(fn func(A, A) A) A
 	FoldLeft(initialValue any, fn func(any, A) any) any
 	Foreach(fn func(A))
+}
+
+// SliceIter definition of Slice Iterator
+type SliceIter[A any] interface {
+	Iter[A]
+	SliceOps[A]
 }
 
 type sliceIter[A any] struct {
