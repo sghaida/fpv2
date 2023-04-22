@@ -7,7 +7,7 @@ import (
 
 func TestRange(t *testing.T) {
 	t.Run("proper iter", func(t *testing.T) {
-		iter, err := Range[int](0, 10, 1)
+		iter, err := Range[int](0, 9, 1)
 		assert.NoError(t, err)
 		assert.Equal(t, iter.Size(), 10)
 		ok := iter.HasNext()
@@ -42,10 +42,10 @@ func TestRange(t *testing.T) {
 	t.Run("consume iter to the end", func(t *testing.T) {
 		iter, err := Range[int](0, 2, 1)
 		assert.NoError(t, err)
-		assert.Equal(t, iter.Size(), 2)
+		assert.Equal(t, iter.Size(), 3)
 
 		remaining := iter.Count()
-		assert.Equal(t, remaining, 2)
+		assert.Equal(t, remaining, 3)
 
 		ok := iter.HasNext()
 		assert.False(t, ok)

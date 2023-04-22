@@ -34,7 +34,7 @@ func Range[A Number](start, end, step A) (RangeIter[A], error) {
 
 // HasNext check if there is next element
 func (iter *rangeIter[A]) HasNext() bool {
-	if iter.size < 0 {
+	if iter.size <= 0 {
 		return false
 	}
 	return iter.start+iter.step <= iter.end+1
