@@ -1,3 +1,4 @@
+// Package iter ...
 package iter
 
 // SliceOps include the operations that can be done on a SliceIter

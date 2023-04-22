@@ -1,3 +1,4 @@
+// Package iter ...
 package iter
 
 // MapIter interface wraps basic Iter

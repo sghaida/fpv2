@@ -1,3 +1,4 @@
+// Package iter ...
 package iter
 
 // Number allowed numbers as type for the iter

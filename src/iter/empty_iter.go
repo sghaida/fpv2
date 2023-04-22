@@ -1,3 +1,4 @@
+// Package iter ...
 package iter
 
 // EmptyIter definition of EmptyIter

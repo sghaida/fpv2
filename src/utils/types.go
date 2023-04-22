@@ -1,3 +1,4 @@
+// Package utils ...
 package utils
 
 // Mapper is a function that applies on type A and transform it to type B
