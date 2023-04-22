@@ -1,5 +1,6 @@
 package iter
 
+// MapIter interface wraps basic Iter
 type MapIter[A, B any] interface {
 	Iter[A]
 }
@@ -9,6 +10,7 @@ type mapIter[A, B any] struct {
 	mapFn func(A) B
 }
 
+// Map create a MapIter
 func Map[A, B any](iter Iter[A], fn func(A) B) Iter[B] {
 	return &mapIter[A, B]{
 		from:  iter,

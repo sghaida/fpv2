@@ -1,5 +1,6 @@
 package iter
 
+// SliceIter definition of Slice Iterator
 type SliceIter[A any] interface {
 	Iter[A]
 	ToSlice() []A

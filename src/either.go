@@ -16,8 +16,9 @@ const (
 )
 
 var (
-	// ErrorLeftValue if left value is being passed to right
-	ErrorLeftValue  = errors.New("left Value is presented")
+	// ErrorLeftValue if left value is presented instead of right
+	ErrorLeftValue = errors.New("left Value is presented")
+	// ErrorRightValue if right value is presented instead of left
 	ErrorRightValue = errors.New("right Value is presented")
 )
 
