@@ -18,8 +18,8 @@ The Library will Include `Mutable` and `Immutable` counterpart collections such 
 - [x] **_[iter](src/iter)_** 
   - [x] **_[EmptyIter](src/iter/empty_iter.go)_** `Next | HasNext | Count | Size`
   - [x] **_[RangeIter](src/iter/range_iter.go)_** `Next | HasNext | Count | Size`
-  - [ ] **_[SliceIter](src/iter)_**  `Next | HasNext | Count | Size | FromSlice | ToSlice | Fold | FoldLeft | Map | Reduce | Filter | Foreach | Slice | Take | TakeWhile | Drop | DropWhile | Contains`
-  - [ ] **_[MapIter](src/iter)_**  `Next | HasNext | Count | Size | FromMap | ToMap | Fold | FoldLeft | Map | Reduce | FilterByKey | FilterByValue | Foreach | ContainsKey | ContainsValue | GroupByValue`
+  - [ ] **_[SliceIter](src/iter)_**  `Next | HasNext | Count | Size | FromSlice | ToSlice | Fold | FoldLeft | Map | Reduce | Filter | Foreach | Slice | Take | TakeWhile | Drop | DropWhile | Contains |Clone`
+  - [ ] **_[MapIter](src/iter)_**  `Next | HasNext | Count | Size | FromMap | ToMap | Fold | FoldLeft | Map | Reduce | FilterByKey | FilterByValue | Foreach | ContainsKey | ContainsValue | GroupByValue | Clone`
 
 - [ ] **_Mutable | Immutable Set_** `Iter | Foreach | Union | Intersect | Add | Remove | Diff | Clone | ToSlice |  Map | FlatMap |  Flatten | Fold | Reduce | Zip | Filter | Add | Remove`
 
