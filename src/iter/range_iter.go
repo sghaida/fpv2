@@ -7,7 +7,6 @@ import (
 // RangeIter definition of RangeIter
 type RangeIter[A Number] interface {
 	Iter[A]
-	Size() int
 	Take(n A, step A) RangeIter[A]
 }
 
@@ -29,16 +28,16 @@ func Range[A Number](start, end, step A) (RangeIter[A], error) {
 		start: start,
 		end:   end,
 		step:  step,
-		size:  (end - start) / step,
+		size:  ((end - start) / step) + 1,
 	}, nil
 }
 
 // HasNext check if there is next element
 func (iter *rangeIter[A]) HasNext() bool {
-	if iter.size <= 0 {
+	if iter.size < 0 {
 		return false
 	}
-	return iter.start+iter.step <= iter.end
+	return iter.start+iter.step <= iter.end+1
 }
 
 // Next return the current step in the Iter
@@ -60,7 +59,7 @@ func (iter *rangeIter[A]) Count() int {
 	if iter.size <= 0 {
 		return 0
 	}
-	count := (iter.end - iter.start) / iter.step
+	count := ((iter.end - iter.start) / iter.step) + 1
 	iter.start = iter.end
 	iter.size = 0
 	return int(count)
@@ -79,7 +78,7 @@ func (iter *rangeIter[A]) Take(n A, step A) RangeIter[A] {
 			start: iter.start,
 			end:   n,
 			step:  step,
-			size:  (n - iter.start) / step,
+			size:  n / step,
 		}
 	}
 

@@ -13,4 +13,5 @@ type Iter[A any] interface {
 	Next() A
 	HasNext() bool
 	Count() int
+	Size() int
 }
