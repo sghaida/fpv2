@@ -4,10 +4,15 @@ type SliceIter[A any] interface {
 	Iter[A]
 	ToSlice() []A
 	Take(n int) SliceIter[A]
+	Filter(fn func(A) bool) SliceIter[A]
+	Map(fn func(A) any) Iter[any]
+	Reduce(fn func(A, A) A) A
+	Fold(fn func(A, A) A) A
+	FoldLeft(initialValue any, fn func(any, A) any) any
 }
 
-type sliceIter[T any] struct {
-	slice   []T
+type sliceIter[A any] struct {
+	slice   []A
 	size    int
 	current int
 }
@@ -58,6 +63,9 @@ func (iter *sliceIter[A]) ToSlice() []A {
 	return out
 }
 
+// Take : take n elements of SliceIter
+// if n <= size => take n elements
+// if n > size => take up to the end of the SliceIter
 func (iter *sliceIter[A]) Take(n int) SliceIter[A] {
 	var outSlice []A
 	for iter.HasNext() && iter.current-1 <= n {
@@ -68,5 +76,51 @@ func (iter *sliceIter[A]) Take(n int) SliceIter[A] {
 		size:    len(outSlice),
 		current: 0,
 	}
+}
 
+// Filter filters SliceIter based on predicate and return new SliceIter
+func (iter *sliceIter[A]) Filter(fn func(value A) bool) SliceIter[A] {
+	var out []A
+	for iter.HasNext() {
+		if value := iter.Next(); fn(value) {
+			out = append(out, value)
+		}
+	}
+	return &sliceIter[A]{
+		slice:   out,
+		size:    len(out),
+		current: 0,
+	}
+}
+
+// Map maps F: A => B any: sliceIter[any]
+func (iter *sliceIter[A]) Map(fn func(value A) any) Iter[any] {
+	res := Map[A, any](iter, fn)
+	return res
+}
+
+// Reduce consume the iterator and apply the reduce function
+func (iter *sliceIter[A]) Reduce(fn func(A, A) A) A {
+	var result A
+	for iter.HasNext() {
+		value := iter.Next()
+		result = fn(result, value)
+	}
+	return result
+}
+
+// Fold consume the iterator and apply the fold function
+// it behaves like reduce
+func (iter *sliceIter[A]) Fold(fn func(A, A) A) A {
+	return iter.Reduce(fn)
+}
+
+// FoldLeft consume the iterator and apply the fold function
+// it behaves like reduce
+func (iter *sliceIter[A]) FoldLeft(initialValue any, fn func(any, A) any) any {
+	for iter.HasNext() {
+		value := iter.Next()
+		initialValue = fn(initialValue, value)
+	}
+	return initialValue
 }
