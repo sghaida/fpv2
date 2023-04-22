@@ -143,7 +143,6 @@ func TestSliceIter_Map(t *testing.T) {
 	t.Run("iter of string with map", func(t *testing.T) {
 		in := []string{"ab", "bc", "cd", "de"}
 		iter := FromSlice(in)
-		// filter even
 		renameIter := iter.Map(func(value string) any {
 			if value == "ab" || value == "de" {
 				return "saddam"
@@ -201,5 +200,36 @@ func TestSliceIter_FoldLeft(t *testing.T) {
 			return a.(int) + valuesMap[s]
 		})
 		assert.Equal(t, result, 10)
+	})
+}
+
+func TestSliceIter_Foreach(t *testing.T) {
+
+	t.Run("iter of int with Foreach", func(t *testing.T) {
+		in := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+		iter := FromSlice(in)
+		ch := make(chan int, 9)
+		iter.Foreach(func(i int) {
+			ch <- i
+		})
+		close(ch)
+		for i := 0; i < len(in); i++ {
+			number := <-ch
+			assert.Equal(t, number, i+1)
+		}
+	})
+
+	t.Run("iter of string with Foreach", func(t *testing.T) {
+		in := []string{"a", "b", "c", "d"}
+		iter := FromSlice(in)
+		ch := make(chan string, 4)
+		iter.Foreach(func(s string) {
+			ch <- s
+		})
+		close(ch)
+		for i := 0; i < len(in); i++ {
+			number := <-ch
+			assert.Equal(t, number, in[i])
+		}
 	})
 }

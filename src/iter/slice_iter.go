@@ -10,6 +10,7 @@ type SliceIter[A any] interface {
 	Reduce(fn func(A, A) A) A
 	Fold(fn func(A, A) A) A
 	FoldLeft(initialValue any, fn func(any, A) any) any
+	Foreach(fn func(A))
 }
 
 type sliceIter[A any] struct {
@@ -124,4 +125,11 @@ func (iter *sliceIter[A]) FoldLeft(initialValue any, fn func(any, A) any) any {
 		initialValue = fn(initialValue, value)
 	}
 	return initialValue
+}
+
+// Foreach F: A => for all element of the Iter apply side affect function
+func (iter *sliceIter[A]) Foreach(fn func(A)) {
+	for iter.HasNext() {
+		fn(iter.Next())
+	}
 }
