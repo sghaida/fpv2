@@ -10,6 +10,7 @@ type SliceOps[A any] interface {
 	Fold(fn func(A, A) A) A
 	FoldLeft(initialValue any, fn func(any, A) any) any
 	Foreach(fn func(A))
+	Slice(from, until int) SliceIter[A]
 }
 
 // SliceIter definition of Slice Iterator
@@ -137,4 +138,48 @@ func (iter *sliceIter[A]) Foreach(fn func(A)) {
 	for iter.HasNext() {
 		fn(iter.Next())
 	}
+}
+
+// Slice Creates an iterator returning an interval of the values produced by this iterator.
+func (iter *sliceIter[A]) Slice(from, until int) SliceIter[A] {
+	// from is beyond the end of the Iter or from is negative
+	if from > iter.size || from < 0 {
+		return &sliceIter[A]{
+			slice:   make([]A, 0),
+			size:    0,
+			current: 0,
+		}
+	}
+	// from > until or until is negative
+	if from > until {
+		return &sliceIter[A]{
+			slice:   make([]A, 0),
+			size:    0,
+			current: 0,
+		}
+	}
+	// happy path
+	originalSlice := iter.slice
+	var tempSlice []A
+	index := from
+	if until <= iter.size {
+		for ; index <= until; index++ {
+			tempSlice = append(tempSlice, originalSlice[index])
+		}
+		return &sliceIter[A]{
+			slice:   tempSlice,
+			size:    len(tempSlice),
+			current: 0,
+		}
+	}
+
+	for ; index < iter.size; index++ {
+		tempSlice = append(tempSlice, originalSlice[index])
+	}
+	return &sliceIter[A]{
+		slice:   tempSlice,
+		size:    len(tempSlice),
+		current: 0,
+	}
+
 }

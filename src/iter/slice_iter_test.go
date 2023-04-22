@@ -233,3 +233,39 @@ func TestSliceIter_Foreach(t *testing.T) {
 		}
 	})
 }
+
+func TestSliceIter_Slice(t *testing.T) {
+
+	t.Run("iter of int with slice", func(t *testing.T) {
+		in := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+		iter := FromSlice(in)
+		t.Run("proper slice", func(t *testing.T) {
+			// from 4 8
+			properlySliced := iter.Slice(3, 7)
+			assert.Equal(t, properlySliced.Size(), 5)
+			// start <= until
+			untilGtStart := iter.Slice(5, 3)
+			assert.Equal(t, untilGtStart.Size(), 0)
+			assert.False(t, untilGtStart.HasNext())
+		})
+
+		t.Run("until greater than the size", func(t *testing.T) {
+			// from 6 to 9 => size of 4
+			toEnd := iter.Slice(5, 20)
+			assert.Equal(t, toEnd.Size(), 4)
+			assert.True(t, toEnd.HasNext())
+		})
+
+		t.Run("negative start", func(t *testing.T) {
+			negativeStart := iter.Slice(-1, 4)
+			assert.Equal(t, negativeStart.Size(), 0)
+			assert.False(t, negativeStart.HasNext())
+		})
+
+		t.Run("exactly 1", func(t *testing.T) {
+			exactly1 := iter.Slice(0, 0)
+			assert.Equal(t, exactly1.Size(), 1)
+			assert.True(t, exactly1.HasNext())
+		})
+	})
+}
