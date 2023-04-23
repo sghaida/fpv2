@@ -5,6 +5,7 @@ import (
 	"errors"
 )
 
+// RangeOps list of operations on RangeIter
 type RangeOps[A any] interface {
 	Contains(elm A) bool
 	Filter(fn func(A) bool) SliceIter[A]
@@ -18,6 +19,7 @@ type RangeOps[A any] interface {
 	Slice(from, until A) SliceIter[A]
 }
 
+// RangeNumberOps list of operations on RangeIter with Number
 type RangeNumberOps[A Number] interface {
 	Clone() RangeIter[A]
 	Take(n, step A) RangeIter[A]
