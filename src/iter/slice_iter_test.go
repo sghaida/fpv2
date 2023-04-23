@@ -240,7 +240,7 @@ func TestSliceIter_Slice(t *testing.T) {
 		in := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 		iter := FromSlice(in)
 		t.Run("proper slice", func(t *testing.T) {
-			// from 4 8
+			// iter 4 8
 			properlySliced := iter.Slice(3, 7)
 			assert.Equal(t, properlySliced.Size(), 5)
 			// start <= until
@@ -250,7 +250,7 @@ func TestSliceIter_Slice(t *testing.T) {
 		})
 
 		t.Run("until greater than the size", func(t *testing.T) {
-			// from 6 to 9 => size of 4
+			// iter 6 to 9 => size of 4
 			toEnd := iter.Slice(5, 20)
 			assert.Equal(t, toEnd.Size(), 4)
 			assert.True(t, toEnd.HasNext())
