@@ -162,7 +162,6 @@ func TestEither_TakeOr(t *testing.T) {
 		value := l.TakeOr(10)
 		assert.Equal(t, value, 10)
 	})
-
 }
 
 func TestEither_TakeOrElse(t *testing.T) {
@@ -369,5 +368,4 @@ func TestEither_ToOption(t *testing.T) {
 		assert.Equal(t, none.value, 0)
 		assert.IsType(t, 10, none.value)
 	})
-
 }
