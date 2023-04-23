@@ -244,6 +244,7 @@ func (ri *rangeIter[A]) Contains(elm A) bool {
 	return false
 }
 
+// ToIter Convert RangeIter => Iter
 func (ri *rangeIter[A]) ToIter() Iter[A] {
 	return any(ri).(Iter[A])
 }
