@@ -48,7 +48,3 @@ func (moi *mapOpIter[A, B]) Count() int {
 func (moi *mapOpIter[A, B]) Size() int {
 	return moi.from.Size()
 }
-
-func (moi *mapOpIter[A, B]) ToIter() Iter[B] {
-	return moi
-}
