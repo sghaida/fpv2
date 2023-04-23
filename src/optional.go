@@ -29,8 +29,6 @@ type Option[A any] struct {
 	t     Type
 }
 
-// TODO add String
-
 // NewOptional create new Option
 func NewOptional[A any](value A) Option[A] {
 	if utils.IsNilOrZeroValue(value) || utils.IsPtr(value) {

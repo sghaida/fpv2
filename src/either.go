@@ -6,7 +6,7 @@ import (
 	"fp/src/utils"
 )
 
-// TODO implement test
+// TODO Add String
 
 // typeSide identifies if Either is left or isRight
 type typeSide string
@@ -163,14 +163,14 @@ func (e Either[A, B]) Map(mapper utils.Mapper[B, any]) Either[A, any] {
 }
 
 // Fold takes to fn f1: A => C , f2: B => C
-//and applies f1 in case off Left and f2 in case of Right
+// and applies f1 in case off Left and f2 in case of Right
 // and returns the resulting value
 func (e Either[A, B]) Fold(a2c utils.Mapper[A, any], b2c utils.Mapper[B, any]) any {
 	return foldEither(e, a2c, b2c)
 }
 
 // foldEither takes to fn f1: A => C , f2: B => C and
-//applies f1 in case off Left and f2 in case of Right
+// applies f1 in case off Left and f2 in case of Right
 // and returns the resulting value
 func foldEither[A, B, C any](either Either[A, B], a2c utils.Mapper[A, C], b2c utils.Mapper[B, C]) C {
 	switch either.side {
