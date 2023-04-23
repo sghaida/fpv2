@@ -1,6 +1,7 @@
 // Package iter ...
 package iter
 
+// MapIter list the operations that is supported by the MapIter
 type MapIter[A comparable, B any] interface {
 	Count() int
 	Size() int
@@ -9,6 +10,7 @@ type MapIter[A comparable, B any] interface {
 	ToMap() map[A]B
 }
 
+// MapEntry holds the values of map Key Value
 type MapEntry[K comparable, V any] struct {
 	Key K
 	Val V
@@ -19,6 +21,7 @@ type mapIter[A comparable, B any] struct {
 	iter SliceIter[MapEntry[A, B]]
 }
 
+// FromMap Converts the Map to Iter
 func FromMap[A comparable, B any](from map[A]B) MapIter[A, B] {
 	var entries []MapEntry[A, B]
 	for k, v := range from {
@@ -51,9 +54,7 @@ func (mi *mapIter[A, B]) Size() int {
 	return mi.iter.Size()
 }
 
-// ToMap builds a map from an iterator over MapEntry items.
-//
-// Duplicate keys are silently overwritten, giving precedence to the last item from the iterator.
+// ToMap builds a map from an Iter.
 func (mi *mapIter[A, B]) ToMap() map[A]B {
 	out := map[A]B{}
 	for mi.iter.HasNext() {
