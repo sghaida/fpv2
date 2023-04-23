@@ -47,6 +47,7 @@ func Range[A Number](start, end, step A) (RangeIter[A], error) {
 	if step < 0 {
 		return &rangeIter[A]{}, errors.New("step < 0")
 	}
+	// TODO handle step 0 as it panics
 	return &rangeIter[A]{
 		start: start,
 		end:   end,
