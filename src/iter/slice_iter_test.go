@@ -126,17 +126,17 @@ func TestSliceIter_Map(t *testing.T) {
 	t.Run("iter of int with map", func(t *testing.T) {
 		in := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
 		iter := FromSlice(in)
-		add1Iter := iter.Map(func(i int) any {
+		mul10Iter := iter.Map(func(i int) any {
 			return i * 10
 		})
-		assert.Equal(t, add1Iter.Size(), 9)
-		value := add1Iter.Next()
-		assert.True(t, add1Iter.HasNext())
+		assert.Equal(t, mul10Iter.Size(), 9)
+		value := mul10Iter.Next()
+		assert.True(t, mul10Iter.HasNext())
 		assert.Equal(t, value, 10)
 		assert.IsType(t, 0, value)
-		assert.Equal(t, add1Iter.Count(), 8)
-		assert.False(t, add1Iter.HasNext())
-		value = add1Iter.Next()
+		assert.Equal(t, mul10Iter.Count(), 8)
+		assert.False(t, mul10Iter.HasNext())
+		value = mul10Iter.Next()
 		assert.Equal(t, value, nil)
 	})
 
