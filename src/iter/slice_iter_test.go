@@ -321,5 +321,10 @@ func TestSliceIter_Contains(t *testing.T) {
 	assert.True(t, status)
 	status = iter.Contains(10)
 	assert.False(t, status)
+}
 
+func TestSliceIter_ToIter(t *testing.T) {
+	in := [][]int{{1, 2, 3}, {4, 5}}
+	iter := FromSlice(in).ToIter()
+	assert.Equal(t, iter.Size(), 2)
 }

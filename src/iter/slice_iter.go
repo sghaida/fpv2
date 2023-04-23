@@ -12,8 +12,9 @@ type SliceOps[A any] interface {
 	Foreach(fn func(A))
 	Map(fn func(A) any) Iter[any]
 	Reduce(fn func(A, A) A) A
-	ToSlice() []A
 	Take(n int) SliceIter[A]
+	ToSlice() []A
+	ToIter() Iter[A]
 	Slice(from, until int) SliceIter[A]
 }
 
@@ -236,4 +237,8 @@ func (iter *sliceIter[A]) Contains(elm A) bool {
 		}
 	}
 	return false
+}
+
+func (iter *sliceIter[A]) ToIter() Iter[A] {
+	return any(iter).(Iter[A])
 }
