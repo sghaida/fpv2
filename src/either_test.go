@@ -250,7 +250,6 @@ func TestEither_Fold(t *testing.T) {
 		switch v := value.(type) {
 		case int:
 			assert.Equal(t, v, 20)
-
 		case error:
 			assert.Fail(t, "expected err, got int")
 		}
