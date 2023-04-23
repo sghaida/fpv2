@@ -54,49 +54,49 @@ func Range[A Number](start, end, step A) (RangeIter[A], error) {
 }
 
 // HasNext check if there is next element
-func (iter *rangeIter[A]) HasNext() bool {
-	if iter.size <= 0 {
+func (ri *rangeIter[A]) HasNext() bool {
+	if ri.size <= 0 {
 		return false
 	}
-	return iter.start+iter.step <= iter.end+1
+	return ri.start+ri.step <= ri.end+1
 }
 
 // Next return the current step in the Iter
 // on success => current step in the Iter, true
 // on failure => return zero value of the Type and false
-func (iter *rangeIter[A]) Next() A {
-	if !iter.HasNext() {
+func (ri *rangeIter[A]) Next() A {
+	if !ri.HasNext() {
 		var value A
 		return value
 	}
-	loc := iter.start
-	iter.start += iter.step
-	iter.size--
+	loc := ri.start
+	ri.start += ri.step
+	ri.size--
 	return loc
 }
 
 // Count return the size of the iter
-func (iter *rangeIter[A]) Count() int {
-	if iter.size <= 0 {
+func (ri *rangeIter[A]) Count() int {
+	if ri.size <= 0 {
 		return 0
 	}
-	count := ((iter.end - iter.start) / iter.step) + 1
-	iter.start = iter.end
-	iter.size = 0
+	count := ((ri.end - ri.start) / ri.step) + 1
+	ri.start = ri.end
+	ri.size = 0
 	return int(count)
 }
 
 // Size return the size of the iter
-func (iter *rangeIter[A]) Size() int {
-	return int(iter.size)
+func (ri *rangeIter[A]) Size() int {
+	return int(ri.size)
 }
 
 // Take :take the first n elements iter an Iter with a configured step
 // and if the end of the iter > n then take up to the end of the iter
-func (iter *rangeIter[A]) Take(n A, step A) RangeIter[A] {
-	if iter.start+n <= iter.end {
+func (ri *rangeIter[A]) Take(n A, step A) RangeIter[A] {
+	if ri.start+n <= ri.end {
 		return &rangeIter[A]{
-			start: iter.start,
+			start: ri.start,
 			end:   n,
 			step:  step,
 			size:  n / step,
@@ -104,18 +104,18 @@ func (iter *rangeIter[A]) Take(n A, step A) RangeIter[A] {
 	}
 
 	return &rangeIter[A]{
-		start: iter.start,
-		end:   iter.end,
+		start: ri.start,
+		end:   ri.end,
 		step:  step,
-		size:  iter.size,
+		size:  ri.size,
 	}
 }
 
 // Filter filters SliceIter based on predicate and return new SliceIter
-func (iter *rangeIter[A]) Filter(fn func(value A) bool) SliceIter[A] {
+func (ri *rangeIter[A]) Filter(fn func(value A) bool) SliceIter[A] {
 	var out []A
-	for iter.HasNext() {
-		if value := iter.Next(); fn(value) {
+	for ri.HasNext() {
+		if value := ri.Next(); fn(value) {
 			out = append(out, value)
 		}
 	}
@@ -127,16 +127,16 @@ func (iter *rangeIter[A]) Filter(fn func(value A) bool) SliceIter[A] {
 }
 
 // Map maps F: A => B any: sliceIter[any]
-func (iter *rangeIter[A]) Map(fn func(value A) any) Iter[any] {
-	res := Map[A, any](iter, fn)
+func (ri *rangeIter[A]) Map(fn func(value A) any) Iter[any] {
+	res := Map[A, any](ri, fn)
 	return res
 }
 
 // Reduce consume the iterator and apply the reduce function
-func (iter *rangeIter[A]) Reduce(fn func(A, A) A) A {
+func (ri *rangeIter[A]) Reduce(fn func(A, A) A) A {
 	var result A
-	for iter.HasNext() {
-		value := iter.Next()
+	for ri.HasNext() {
+		value := ri.Next()
 		result = fn(result, value)
 	}
 	return result
@@ -144,30 +144,30 @@ func (iter *rangeIter[A]) Reduce(fn func(A, A) A) A {
 
 // Fold consume the iterator and apply the fold function
 // it behaves like reduce
-func (iter *rangeIter[A]) Fold(fn func(A, A) A) A {
-	return iter.Reduce(fn)
+func (ri *rangeIter[A]) Fold(fn func(A, A) A) A {
+	return ri.Reduce(fn)
 }
 
 // FoldLeft consume the iterator and apply the fold function
 // it behaves like reduce
-func (iter *rangeIter[A]) FoldLeft(initialValue any, fn func(any, A) any) any {
-	for iter.HasNext() {
-		value := iter.Next()
+func (ri *rangeIter[A]) FoldLeft(initialValue any, fn func(any, A) any) any {
+	for ri.HasNext() {
+		value := ri.Next()
 		initialValue = fn(initialValue, value)
 	}
 	return initialValue
 }
 
 // Foreach F: A => for all element of the Iter apply side affect function
-func (iter *rangeIter[A]) Foreach(fn func(A)) {
-	for iter.HasNext() {
-		fn(iter.Next())
+func (ri *rangeIter[A]) Foreach(fn func(A)) {
+	for ri.HasNext() {
+		fn(ri.Next())
 	}
 }
 
 // Slice Creates an iterator returning an interval of the values produced by this iterator.
-func (iter *rangeIter[A]) Slice(from, until A) SliceIter[A] {
-	// iter is beyond the end of the Iter or iter is negative
+func (ri *rangeIter[A]) Slice(from, until A) SliceIter[A] {
+	// ri is beyond the end of the Iter or ri is negative
 	if from < 0 || until < 0 {
 		return &sliceIter[A]{
 			slice:   make([]A, 0),
@@ -177,22 +177,22 @@ func (iter *rangeIter[A]) Slice(from, until A) SliceIter[A] {
 	}
 
 	// happy path
-	originalIter := iter
+	originalIter := ri
 	var tempSlice []A
 
 	for originalIter.HasNext() {
-		if iter.start < from {
-			iter.Next()
+		if ri.start < from {
+			ri.Next()
 			continue
 		}
-		if iter.start > until || iter.start == iter.end {
+		if ri.start > until || ri.start == ri.end {
 			return &sliceIter[A]{
 				slice:   tempSlice,
 				size:    len(tempSlice),
 				current: 0,
 			}
 		}
-		value := iter.Next()
+		value := ri.Next()
 		tempSlice = append(tempSlice, value)
 	}
 
@@ -204,36 +204,36 @@ func (iter *rangeIter[A]) Slice(from, until A) SliceIter[A] {
 }
 
 // Clone copy SliceIter to another SliceIter
-func (iter *rangeIter[A]) Clone() RangeIter[A] {
+func (ri *rangeIter[A]) Clone() RangeIter[A] {
 	return &rangeIter[A]{
-		start: iter.start,
-		end:   iter.end,
-		step:  iter.step,
-		size:  iter.size,
+		start: ri.start,
+		end:   ri.end,
+		step:  ri.step,
+		size:  ri.size,
 	}
 }
 
 // Drop :drop n elements of the SliceIter and new SliceIter
-func (iter *rangeIter[A]) Drop(n A) RangeIter[A] {
+func (ri *rangeIter[A]) Drop(n A) RangeIter[A] {
 
-	for iter.HasNext() {
-		if iter.start > n {
-			return iter
+	for ri.HasNext() {
+		if ri.start > n {
+			return ri
 		}
-		iter.Next()
+		ri.Next()
 	}
 	return &rangeIter[A]{
 		start: 0,
 		end:   0,
-		step:  iter.step,
+		step:  ri.step,
 		size:  0,
 	}
 }
 
 // Contains return True if element exists
-func (iter *rangeIter[A]) Contains(elm A) bool {
-	for iter.HasNext() {
-		value := iter.Next()
+func (ri *rangeIter[A]) Contains(elm A) bool {
+	for ri.HasNext() {
+		value := ri.Next()
 		if any(value) == any(elm) {
 			return true
 		}
@@ -241,16 +241,16 @@ func (iter *rangeIter[A]) Contains(elm A) bool {
 	return false
 }
 
-func (iter *rangeIter[A]) ToIter() Iter[A] {
-	return any(iter).(Iter[A])
+func (ri *rangeIter[A]) ToIter() Iter[A] {
+	return any(ri).(Iter[A])
 }
 
 // ToSlice convert Iter to slice
-func (iter *rangeIter[A]) ToSlice() []A {
-	size := any(iter.size).(int)
+func (ri *rangeIter[A]) ToSlice() []A {
+	size := any(ri.size).(int)
 	out := make([]A, 0, size)
-	for iter.HasNext() {
-		out = append(out, iter.Next())
+	for ri.HasNext() {
+		out = append(out, ri.Next())
 	}
 	return out
 }

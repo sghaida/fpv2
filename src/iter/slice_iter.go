@@ -36,53 +36,53 @@ func FromSlice[A any](slice []A) SliceIter[A] {
 }
 
 // HasNext check if there is next element
-func (iter *sliceIter[A]) HasNext() bool {
-	if len(iter.slice) != 0 {
+func (si *sliceIter[A]) HasNext() bool {
+	if len(si.slice) != 0 {
 		return true
 	}
 	return false
 }
 
 // Next return the next element in the slice if available
-func (iter *sliceIter[A]) Next() A {
-	if !iter.HasNext() {
+func (si *sliceIter[A]) Next() A {
+	if !si.HasNext() {
 		var zero A
 		return zero
 	}
-	item := iter.slice[0]
-	iter.slice = iter.slice[1:]
-	iter.current++
-	iter.size = len(iter.slice)
+	item := si.slice[0]
+	si.slice = si.slice[1:]
+	si.current++
+	si.size = len(si.slice)
 	return item
 }
 
 // Count return the size of the iter and move to the end of the iter
-func (iter *sliceIter[A]) Count() int {
-	count := len(iter.slice)
-	iter.slice = []A{}
-	iter.current = iter.size
+func (si *sliceIter[A]) Count() int {
+	count := len(si.slice)
+	si.slice = []A{}
+	si.current = si.size
 	return count
 }
 
 // Size return the size of the iter
-func (iter *sliceIter[A]) Size() int {
-	return iter.size
+func (si *sliceIter[A]) Size() int {
+	return si.size
 }
 
 // ToSlice convert Iter to slice
-func (iter *sliceIter[A]) ToSlice() []A {
-	out := make([]A, len(iter.slice), len(iter.slice))
-	_ = copy(out, iter.slice)
+func (si *sliceIter[A]) ToSlice() []A {
+	out := make([]A, len(si.slice), len(si.slice))
+	_ = copy(out, si.slice)
 	return out
 }
 
 // Take : take n elements of SliceIter
 // if n <= size => take n elements
 // if n > size => take up to the end of the SliceIter
-func (iter *sliceIter[A]) Take(n int) SliceIter[A] {
+func (si *sliceIter[A]) Take(n int) SliceIter[A] {
 	var outSlice []A
-	for iter.HasNext() && iter.current-1 <= n {
-		outSlice = append(outSlice, iter.Next())
+	for si.HasNext() && si.current-1 <= n {
+		outSlice = append(outSlice, si.Next())
 	}
 	return &sliceIter[A]{
 		slice:   outSlice,
@@ -92,10 +92,10 @@ func (iter *sliceIter[A]) Take(n int) SliceIter[A] {
 }
 
 // Filter filters SliceIter based on predicate and return new SliceIter
-func (iter *sliceIter[A]) Filter(fn func(value A) bool) SliceIter[A] {
+func (si *sliceIter[A]) Filter(fn func(value A) bool) SliceIter[A] {
 	var out []A
-	for iter.HasNext() {
-		if value := iter.Next(); fn(value) {
+	for si.HasNext() {
+		if value := si.Next(); fn(value) {
 			out = append(out, value)
 		}
 	}
@@ -107,16 +107,16 @@ func (iter *sliceIter[A]) Filter(fn func(value A) bool) SliceIter[A] {
 }
 
 // Map maps F: A => B any: sliceIter[any]
-func (iter *sliceIter[A]) Map(fn func(value A) any) Iter[any] {
-	res := Map[A, any](iter, fn)
+func (si *sliceIter[A]) Map(fn func(value A) any) Iter[any] {
+	res := Map[A, any](si, fn)
 	return res
 }
 
 // Reduce consume the iterator and apply the reduce function
-func (iter *sliceIter[A]) Reduce(fn func(A, A) A) A {
+func (si *sliceIter[A]) Reduce(fn func(A, A) A) A {
 	var result A
-	for iter.HasNext() {
-		value := iter.Next()
+	for si.HasNext() {
+		value := si.Next()
 		result = fn(result, value)
 	}
 	return result
@@ -124,31 +124,31 @@ func (iter *sliceIter[A]) Reduce(fn func(A, A) A) A {
 
 // Fold consume the iterator and apply the fold function
 // it behaves like reduce
-func (iter *sliceIter[A]) Fold(fn func(A, A) A) A {
-	return iter.Reduce(fn)
+func (si *sliceIter[A]) Fold(fn func(A, A) A) A {
+	return si.Reduce(fn)
 }
 
 // FoldLeft consume the iterator and apply the fold function
 // it behaves like reduce
-func (iter *sliceIter[A]) FoldLeft(initialValue any, fn func(any, A) any) any {
-	for iter.HasNext() {
-		value := iter.Next()
+func (si *sliceIter[A]) FoldLeft(initialValue any, fn func(any, A) any) any {
+	for si.HasNext() {
+		value := si.Next()
 		initialValue = fn(initialValue, value)
 	}
 	return initialValue
 }
 
 // Foreach F: A => for all element of the Iter apply side affect function
-func (iter *sliceIter[A]) Foreach(fn func(A)) {
-	for iter.HasNext() {
-		fn(iter.Next())
+func (si *sliceIter[A]) Foreach(fn func(A)) {
+	for si.HasNext() {
+		fn(si.Next())
 	}
 }
 
 // Slice Creates an iterator returning an interval of the values produced by this iterator.
-func (iter *sliceIter[A]) Slice(from, until int) SliceIter[A] {
+func (si *sliceIter[A]) Slice(from, until int) SliceIter[A] {
 	// from is beyond the end of the Iter or from is negative
-	if from > iter.size || from < 0 {
+	if from > si.size || from < 0 {
 		return &sliceIter[A]{
 			slice:   make([]A, 0),
 			size:    0,
@@ -164,10 +164,10 @@ func (iter *sliceIter[A]) Slice(from, until int) SliceIter[A] {
 		}
 	}
 	// happy path
-	originalSlice := iter.slice
+	originalSlice := si.slice
 	var tempSlice []A
 	index := from
-	if until <= iter.size {
+	if until <= si.size {
 		for ; index <= until; index++ {
 			tempSlice = append(tempSlice, originalSlice[index])
 		}
@@ -178,7 +178,7 @@ func (iter *sliceIter[A]) Slice(from, until int) SliceIter[A] {
 		}
 	}
 
-	for ; index < iter.size; index++ {
+	for ; index < si.size; index++ {
 		tempSlice = append(tempSlice, originalSlice[index])
 	}
 	return &sliceIter[A]{
@@ -189,20 +189,20 @@ func (iter *sliceIter[A]) Slice(from, until int) SliceIter[A] {
 }
 
 // Clone copy SliceIter to another SliceIter
-func (iter *sliceIter[A]) Clone() SliceIter[A] {
-	slice := make([]A, iter.size)
-	copy(slice, iter.slice)
+func (si *sliceIter[A]) Clone() SliceIter[A] {
+	slice := make([]A, si.size)
+	copy(slice, si.slice)
 	return &sliceIter[A]{
 		slice:   slice,
-		current: iter.current,
-		size:    iter.size,
+		current: si.current,
+		size:    si.size,
 	}
 }
 
 // Drop :drop n elements of the SliceIter and new SliceIter
-func (iter *sliceIter[A]) Drop(n int) SliceIter[A] {
+func (si *sliceIter[A]) Drop(n int) SliceIter[A] {
 
-	if n < 0 || n >= iter.size {
+	if n < 0 || n >= si.size {
 		return &sliceIter[A]{
 			slice:   make([]A, 0, 0),
 			size:    0,
@@ -212,14 +212,14 @@ func (iter *sliceIter[A]) Drop(n int) SliceIter[A] {
 
 	var slice []A
 	var index int
-	for iter.HasNext() {
+	for si.HasNext() {
 		if index >= n {
-			slice = append(slice, iter.Next())
+			slice = append(slice, si.Next())
 			index++
 			continue
 		}
 		index++
-		iter.Next()
+		si.Next()
 	}
 	return &sliceIter[A]{
 		slice:   slice,
@@ -229,9 +229,9 @@ func (iter *sliceIter[A]) Drop(n int) SliceIter[A] {
 }
 
 // Contains return True if element exists
-func (iter *sliceIter[A]) Contains(elm A) bool {
-	for iter.HasNext() {
-		value := iter.Next()
+func (si *sliceIter[A]) Contains(elm A) bool {
+	for si.HasNext() {
+		value := si.Next()
 		if any(value) == any(elm) {
 			return true
 		}
@@ -239,6 +239,6 @@ func (iter *sliceIter[A]) Contains(elm A) bool {
 	return false
 }
 
-func (iter *sliceIter[A]) ToIter() Iter[A] {
-	return any(iter).(Iter[A])
+func (si *sliceIter[A]) ToIter() Iter[A] {
+	return any(si).(Iter[A])
 }
