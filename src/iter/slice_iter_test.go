@@ -269,3 +269,57 @@ func TestSliceIter_Slice(t *testing.T) {
 		})
 	})
 }
+
+func TestSliceIter_Drop(t *testing.T) {
+	t.Run("iter drop n < size", func(t *testing.T) {
+		in := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+		iter := FromSlice(in)
+		result := iter.Drop(5)
+		assert.Equal(t, result.Size(), 4)
+	})
+
+	t.Run("iter drop n > size", func(t *testing.T) {
+		in := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+		iter := FromSlice(in)
+		result := iter.Drop(10)
+		assert.Equal(t, result.Size(), 0)
+		assert.False(t, result.HasNext())
+	})
+
+	t.Run("iter drop n == size", func(t *testing.T) {
+		in := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+		iter := FromSlice(in)
+		result := iter.Drop(9)
+		assert.Equal(t, result.Size(), 0)
+		assert.False(t, result.HasNext())
+	})
+
+	t.Run("iter drop negative number", func(t *testing.T) {
+		in := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+		iter := FromSlice(in)
+		result := iter.Drop(-1)
+		assert.Equal(t, result.Size(), 0)
+		assert.False(t, result.HasNext())
+	})
+}
+
+func TestSliceIter_Clone(t *testing.T) {
+	in := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	iter := FromSlice(in)
+	clone := iter.Clone()
+	assert.Equal(t, iter.Size(), clone.Size())
+	iter.Next()
+	assert.NotEqual(t, iter.Size(), clone.Size())
+	value := clone.Next()
+	assert.Equal(t, value, 1)
+}
+
+func TestSliceIter_Contains(t *testing.T) {
+	in := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	iter := FromSlice(in)
+	status := iter.Contains(3)
+	assert.True(t, status)
+	status = iter.Contains(10)
+	assert.False(t, status)
+
+}

@@ -3,14 +3,17 @@ package iter
 
 // SliceOps include the operations that can be done on a SliceIter
 type SliceOps[A any] interface {
-	ToSlice() []A
-	Take(n int) SliceIter[A]
+	Clone() SliceIter[A]
+	Contains(elm A) bool
+	Drop(n int) SliceIter[A]
 	Filter(fn func(A) bool) SliceIter[A]
-	Map(fn func(A) any) Iter[any]
-	Reduce(fn func(A, A) A) A
 	Fold(fn func(A, A) A) A
 	FoldLeft(initialValue any, fn func(any, A) any) any
 	Foreach(fn func(A))
+	Map(fn func(A) any) Iter[any]
+	Reduce(fn func(A, A) A) A
+	ToSlice() []A
+	Take(n int) SliceIter[A]
 	Slice(from, until int) SliceIter[A]
 }
 
@@ -182,5 +185,55 @@ func (iter *sliceIter[A]) Slice(from, until int) SliceIter[A] {
 		size:    len(tempSlice),
 		current: 0,
 	}
+}
 
+// Clone copy SliceIter to another SliceIter
+func (iter *sliceIter[A]) Clone() SliceIter[A] {
+	slice := make([]A, iter.size)
+	copy(slice, iter.slice)
+	return &sliceIter[A]{
+		slice:   slice,
+		current: iter.current,
+		size:    iter.size,
+	}
+}
+
+// Drop :drop n elements of the SliceIter and new SliceIter
+func (iter *sliceIter[A]) Drop(n int) SliceIter[A] {
+
+	if n < 0 || n >= iter.size {
+		return &sliceIter[A]{
+			slice:   make([]A, 0, 0),
+			size:    0,
+			current: 0,
+		}
+	}
+
+	var slice []A
+	var index int
+	for iter.HasNext() {
+		if index >= n {
+			slice = append(slice, iter.Next())
+			index++
+			continue
+		}
+		index++
+		iter.Next()
+	}
+	return &sliceIter[A]{
+		slice:   slice,
+		size:    len(slice),
+		current: 0,
+	}
+}
+
+// Contains return True if element exists
+func (iter *sliceIter[A]) Contains(elm A) bool {
+	for iter.HasNext() {
+		value := iter.Next()
+		if any(value) == any(elm) {
+			return true
+		}
+	}
+	return false
 }
