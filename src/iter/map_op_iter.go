@@ -4,6 +4,7 @@ package iter
 // MapOpIter interface wraps basic Iter
 type MapOpIter[A, B any] interface {
 	Iter[A]
+	ToIter() Iter[B]
 }
 
 type mapOpIter[A, B any] struct {
@@ -20,8 +21,8 @@ func Map[A, B any](iter Iter[A], fn func(A) B) Iter[B] {
 }
 
 // HasNext check if there is next element
-func (iter *mapOpIter[A, B]) HasNext() bool {
-	if iter.from.HasNext() {
+func (moi *mapOpIter[A, B]) HasNext() bool {
+	if moi.from.HasNext() {
 		return true
 	}
 	return false
@@ -29,21 +30,25 @@ func (iter *mapOpIter[A, B]) HasNext() bool {
 
 // Next return the next element in the slice if available
 // please note that the default value of type B could be nil
-func (iter *mapOpIter[A, B]) Next() B {
-	if !iter.from.HasNext() {
+func (moi *mapOpIter[A, B]) Next() B {
+	if !moi.from.HasNext() {
 		var zero B
 		return zero
 	}
-	value := iter.from.Next()
-	return iter.mapFn(value)
+	value := moi.from.Next()
+	return moi.mapFn(value)
 }
 
 // Count return the size of the iter and move to the end of the iter
-func (iter *mapOpIter[A, B]) Count() int {
-	return iter.from.Count()
+func (moi *mapOpIter[A, B]) Count() int {
+	return moi.from.Count()
 }
 
 // Size return the size of the iter
-func (iter *mapOpIter[A, B]) Size() int {
-	return iter.from.Size()
+func (moi *mapOpIter[A, B]) Size() int {
+	return moi.from.Size()
+}
+
+func (moi *mapOpIter[A, B]) ToIter() Iter[B] {
+	return moi
 }
