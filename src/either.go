@@ -162,13 +162,15 @@ func (e Either[A, B]) Map(mapper utils.Mapper[B, any]) Either[A, any] {
 	}
 }
 
-// Fold takes to fn f1: A => C , f2: B => C and applies f1 in case off Left and f2 in case of Right
+// Fold takes to fn f1: A => C , f2: B => C
+//and applies f1 in case off Left and f2 in case of Right
 // and returns the resulting value
 func (e Either[A, B]) Fold(a2c utils.Mapper[A, any], b2c utils.Mapper[B, any]) any {
 	return foldEither(e, a2c, b2c)
 }
 
-// foldEither takes to fn f1: A => C , f2: B => C and applies f1 in case off Left and f2 in case of Right
+// foldEither takes to fn f1: A => C , f2: B => C and
+//applies f1 in case off Left and f2 in case of Right
 // and returns the resulting value
 func foldEither[A, B, C any](either Either[A, B], a2c utils.Mapper[A, C], b2c utils.Mapper[B, C]) C {
 	switch either.side {
@@ -186,8 +188,6 @@ func (e Either[A, B]) Exists(fn utils.Predicate[B]) bool {
 	}
 	return fn(e.right)
 }
-
-type flatten[A, B any] func(value B) Either[A, any]
 
 // FlatMapperFn function definition that takes Right value and apply the function
 type FlatMapperFn[A, B, C any] func(value B) Either[A, C]
