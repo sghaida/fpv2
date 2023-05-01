@@ -1,6 +1,7 @@
 // Package iter ...
 package iter
 
+// MapOps include the operations that can be done on a MapIter
 type MapOps[A comparable, B any] interface {
 	Clone() MapIter[A, B]
 	Contains(elm A) bool
