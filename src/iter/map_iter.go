@@ -6,9 +6,9 @@ type MapOps[A comparable, B any] interface {
 	Contains(elm A) bool
 	Filter(fn func(A) bool) MapIter[A, B]
 	Fold(fn func(acc B, key A, value B) B) B
-	FoldLeft(acc any, fn func(acc any, key A, value B) MapEntry[A, B]) any
+	FoldLeft(acc any, fn func(key A, value B) any) any
 	Foreach(fn func(key A, value B))
-	Map(fn func(A, B) any) MapIter[A, any]
+	Map(fn func(key A, value B) any) MapIter[A, any]
 	Reduce(fn func(v1, v2 B) B) B
 	ToSlice() []MapEntry[A, B]
 }
@@ -53,8 +53,9 @@ func (mi *mapIter[A, B]) HasNext() bool {
 
 // Next return the next element in the slice if available
 func (mi *mapIter[A, B]) Next() MapEntry[A, B] {
-	return mi.iter.Next()
-
+	value := mi.iter.Next()
+	delete(mi.m, value.Key)
+	return value
 }
 
 // Count return the size of the iter and move to the end of the iter
@@ -124,10 +125,10 @@ func (mi *mapIter[A, B]) Fold(fn func(acc B, key A, value B) B) B {
 }
 
 // FoldLeft consume the iterator and apply the fold function
-func (mi *mapIter[A, B]) FoldLeft(acc any, fn func(acc any, key A, value B) MapEntry[A, B]) any {
+func (mi *mapIter[A, B]) FoldLeft(acc any, fn func(key A, value B) any) any {
 	for mi.HasNext() {
 		value := mi.Next()
-		acc = fn(acc, value.Key, value.Val)
+		acc = fn(value.Key, value.Val)
 	}
 	return acc
 }
@@ -141,7 +142,7 @@ func (mi *mapIter[A, B]) Foreach(fn func(key A, value B)) {
 }
 
 // Map maps F: A, B => any
-func (mi *mapIter[A, B]) Map(fn func(A, B) any) MapIter[A, any] {
+func (mi *mapIter[A, B]) Map(fn func(key A, value B) any) MapIter[A, any] {
 	m := make(map[A]any)
 	for mi.HasNext() {
 		value := mi.Next()
