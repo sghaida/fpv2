@@ -1,3 +1,4 @@
+// Package collections ...
 package collections
 
 // List is generic slice
