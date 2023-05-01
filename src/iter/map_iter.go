@@ -4,13 +4,13 @@ package iter
 // MapOps include the operations that can be done on a MapIter
 type MapOps[A comparable, B any] interface {
 	Clone() MapIter[A, B]
-	Contains(elm A) bool
-	Filter(fn func(A) bool) MapIter[A, B]
+	Contains(key A) bool
+	Filter(fn func(key A) bool) MapIter[A, B]
 	Fold(fn func(acc B, key A, value B) B) B
 	FoldLeft(acc any, fn func(key A, value B) any) any
 	Foreach(fn func(key A, value B))
 	Map(fn func(key A, value B) any) MapIter[A, any]
-	Reduce(fn func(v1, v2 B) B) B
+	Reduce(fn func(value1, value2 B) B) B
 	ToSlice() []MapEntry[A, B]
 }
 
@@ -95,7 +95,7 @@ func (mi *mapIter[A, B]) Contains(key A) bool {
 }
 
 // Filter filters a map based on key predicate
-func (mi *mapIter[A, B]) Filter(fn func(A) bool) MapIter[A, B] {
+func (mi *mapIter[A, B]) Filter(fn func(key A) bool) MapIter[A, B] {
 	m := make(map[A]B)
 	for k, v := range mi.m {
 		if fn(k) {
@@ -106,7 +106,7 @@ func (mi *mapIter[A, B]) Filter(fn func(A) bool) MapIter[A, B] {
 }
 
 // Reduce consume the iterator and apply the reduce function
-func (mi *mapIter[A, B]) Reduce(fn func(v1, v2 B) B) B {
+func (mi *mapIter[A, B]) Reduce(fn func(value1, value2 B) B) B {
 	var result B
 	for mi.HasNext() {
 		entry := mi.Next()
