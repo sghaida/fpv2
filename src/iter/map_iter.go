@@ -1,6 +1,18 @@
 // Package iter ...
 package iter
 
+type MapOps[A comparable, B any] interface {
+	Clone() MapIter[A, B]
+	Contains(elm A) bool
+	Filter(fn func(A) bool) MapIter[A, B]
+	Fold(fn func(acc B, key A, value B) B) B
+	FoldLeft(acc any, fn func(acc any, key A, value B) MapEntry[A, B]) any
+	Foreach(fn func(key A, value B))
+	Map(fn func(A, B) any) MapIter[A, any]
+	Reduce(fn func(v1, v2 B) B) B
+	ToSlice() []MapEntry[A, B]
+}
+
 // MapIter list the operations that is supported by the MapIter
 type MapIter[A comparable, B any] interface {
 	Count() int
@@ -8,6 +20,7 @@ type MapIter[A comparable, B any] interface {
 	HasNext() bool
 	Next() MapEntry[A, B]
 	ToMap() map[A]B
+	MapOps[A, B]
 }
 
 // MapEntry holds the values of map Key Value
@@ -62,4 +75,83 @@ func (mi *mapIter[A, B]) ToMap() map[A]B {
 		out[value.Key] = value.Val
 	}
 	return out
+}
+
+// Clone clones MapIter
+func (mi *mapIter[A, B]) Clone() MapIter[A, B] {
+	m := make(map[A]B)
+	for k, v := range mi.m {
+		m[k] = v
+	}
+	return FromMap(m)
+}
+
+// Contains check if key exists
+func (mi *mapIter[A, B]) Contains(key A) bool {
+	_, ok := mi.m[key]
+	return ok
+}
+
+// Filter filters a map based on key predicate
+func (mi *mapIter[A, B]) Filter(fn func(A) bool) MapIter[A, B] {
+	m := make(map[A]B)
+	for k, v := range mi.m {
+		if fn(k) {
+			m[k] = v
+		}
+	}
+	return FromMap(m)
+}
+
+// Reduce consume the iterator and apply the reduce function
+func (mi *mapIter[A, B]) Reduce(fn func(v1, v2 B) B) B {
+	var result B
+	for mi.HasNext() {
+		entry := mi.Next()
+		result = fn(result, entry.Val)
+	}
+	return result
+}
+
+// Fold consume the iterator and apply the fold function
+func (mi *mapIter[A, B]) Fold(fn func(acc B, key A, value B) B) B {
+	var acc B
+	for mi.HasNext() {
+		value := mi.Next()
+		acc = fn(acc, value.Key, value.Val)
+	}
+	return acc
+}
+
+// FoldLeft consume the iterator and apply the fold function
+func (mi *mapIter[A, B]) FoldLeft(acc any, fn func(acc any, key A, value B) MapEntry[A, B]) any {
+	for mi.HasNext() {
+		value := mi.Next()
+		acc = fn(acc, value.Key, value.Val)
+	}
+	return acc
+}
+
+// Foreach F: A => for all element of the Iter apply side affect function
+func (mi *mapIter[A, B]) Foreach(fn func(key A, value B)) {
+	for mi.HasNext() {
+		value := mi.Next()
+		fn(value.Key, value.Val)
+	}
+}
+
+// Map maps F: A, B => any
+func (mi *mapIter[A, B]) Map(fn func(A, B) any) MapIter[A, any] {
+	m := make(map[A]any)
+	for mi.HasNext() {
+		value := mi.Next()
+		entry := fn(value.Key, value.Val)
+		m[value.Key] = entry
+	}
+	return FromMap(m)
+}
+
+// ToSlice Convert MapIter to Slice
+func (mi *mapIter[A, B]) ToSlice() []MapEntry[A, B] {
+	return mi.iter.ToSlice()
 }

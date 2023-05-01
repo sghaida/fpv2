@@ -4,7 +4,6 @@ package iter
 // MapOpIter interface wraps basic Iter
 type MapOpIter[A, B any] interface {
 	Iter[A]
-	ToIter() Iter[B]
 }
 
 type mapOpIter[A, B any] struct {

@@ -114,12 +114,12 @@ func (si *sliceIter[A]) Map(fn func(value A) any) Iter[any] {
 
 // Reduce consume the iterator and apply the reduce function
 func (si *sliceIter[A]) Reduce(fn func(A, A) A) A {
-	var result A
+	var acc A
 	for si.HasNext() {
 		value := si.Next()
-		result = fn(result, value)
+		acc = fn(acc, value)
 	}
-	return result
+	return acc
 }
 
 // Fold consume the iterator and apply the fold function
@@ -129,13 +129,12 @@ func (si *sliceIter[A]) Fold(fn func(A, A) A) A {
 }
 
 // FoldLeft consume the iterator and apply the fold function
-// it behaves like reduce
-func (si *sliceIter[A]) FoldLeft(initialValue any, fn func(any, A) any) any {
+func (si *sliceIter[A]) FoldLeft(acc any, fn func(any, A) any) any {
 	for si.HasNext() {
 		value := si.Next()
-		initialValue = fn(initialValue, value)
+		acc = fn(acc, value)
 	}
-	return initialValue
+	return acc
 }
 
 // Foreach F: A => for all element of the Iter apply side affect function
