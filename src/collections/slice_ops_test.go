@@ -42,6 +42,14 @@ func TestReduce(t *testing.T) {
 	assert.Equal(t, res, 15)
 }
 
+func TestFoldLeft(t *testing.T) {
+	input := collections.List[int]{1, 2, 3, 4, 5}
+	output := collections.FoldLeft(input, 1, func(acc int, value int) int {
+		return acc * value
+	})
+	assert.Equal(t, output, 120)
+}
+
 func TestList_Append(t *testing.T) {
 	lst := collections.List[int]{1, 2, 3, 4, 5}
 	res := lst.Append(6)
