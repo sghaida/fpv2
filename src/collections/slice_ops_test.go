@@ -75,3 +75,37 @@ func TestList_Take(t *testing.T) {
 	res = lst.Take(10)
 	assert.Equal(t, res.Size(), 5)
 }
+
+func TestFlatten(t *testing.T) {
+	lst := collections.List[collections.List[int]]{
+		collections.List[int]{1, 2},
+		collections.List[int]{3, 4, 5},
+		collections.List[int]{6},
+	}
+	expected := collections.List[int]{1, 2, 3, 4, 5, 6}
+	result := collections.Flatten(lst)
+	assert.Equal(t, expected, result)
+
+	lst = collections.List[collections.List[int]]{
+		collections.List[int]{1},
+		collections.List[int]{},
+		collections.List[int]{2, 3},
+	}
+	expected = collections.List[int]{1, 2, 3}
+	result = collections.Flatten(lst)
+	assert.Equal(t, expected, result)
+
+	lst = collections.List[collections.List[int]]{}
+	expected = collections.List[int](nil)
+	result = collections.Flatten(lst)
+	assert.Equal(t, expected, result)
+}
+
+func TestFlatMap(t *testing.T) {
+	lst := collections.List[int]{1, 2, 3}
+	mapper := func(elm int) collections.List[int] {
+		return collections.List[int]{elm, elm * 2}
+	}
+	result := collections.FlatMap(lst, mapper)
+	assert.Equal(t, result, collections.List[int]{1, 2, 2, 4, 3, 6})
+}

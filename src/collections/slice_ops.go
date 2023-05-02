@@ -76,6 +76,8 @@ func (a List[A]) Take(n int) List[A] {
 // while the `B` type parameter specifies the type of elements in the mapped list.
 // The `mapper` function takes an element of type `A` as input, and returns an element of type `B` as output.
 // The function returns a new list containing the mapped elements.
+//
+//
 // Example usage:
 // Given a list of integers, we can use the `Map` function to square each integer and create a new list of the squared values:
 //
@@ -97,6 +99,7 @@ func Map[A, B any](lst List[A], mapper Mapper[A, B]) List[B] {
 // The `reducer` function takes an accumulated value of type `B` and an element of type `A` as input,
 // and returns a new accumulated value of type `B` as output.
 // The function applies the `reducer` function to each element in the `lst` list and returns the final accumulated value.
+//
 // Example usage:
 // Given a list of integers, we can use the `Reduce` function to compute the sum of the integers:
 //
@@ -117,6 +120,7 @@ func Reduce[A, B any](lst List[A], reducer Reducer[A, B]) B {
 // and returns a new accumulated value of type `B` as output.
 // The function applies the `fn` reducer function to each element in the `lst` list,
 // starting with the initial accumulator value `acc`, and returns the final accumulated value.
+//
 // Example usage:
 // Given a list of integers, we can use the `FoldLeft` function to compute the product of the integers:
 //
@@ -129,4 +133,46 @@ func FoldLeft[A, B any](lst List[A], acc B, fn Reducer[A, B]) B {
 		acc = fn(acc, value)
 	}
 	return acc
+}
+
+// Flatten takes a list of lists and returns a flattened list that contains all the elements in the original list of lists.
+// The `A` type parameter specifies the type of elements in the original list of lists, which should be a list type `List[B]`.
+// The returned list will have elements of type `B`.
+//
+// Example usage:
+// Given a list of lists of integers, we can use the `Flatten` function to obtain a single list of all the integers:
+//
+//	input := List[List[int]]{
+//	    {1, 2},
+//	    {3},
+//	    {4, 5, 6},
+//	}
+//	output := Flatten[int, int](input)
+//	// Output: List[int]{1, 2, 3, 4, 5, 6}
+func Flatten[A List[B], B any](lst List[A]) List[B] {
+	var acc []B
+	for _, sublist := range lst {
+		for _, elem := range sublist {
+			acc = append(acc, elem)
+		}
+	}
+	return acc
+}
+
+// FlatMap returns a new list obtained by applying the given mapper function to each element of the input list
+// and flattening the results. The mapper function takes an element of type A and returns a list of elements of
+// type B. The resulting list is a concatenation of all the lists returned by the mapper function.
+//
+// Example usage:
+//
+//	lst := List{1, 2, 3}
+//	mapper := func(x int) List[int] {
+//	    return List{x, x * 2, x * 3}
+//	}
+//	result := FlatMap(lst, mapper) // result = List{1, 2, 3, 2, 4, 6, 3, 6, 9}
+//
+// The FlatMap function is implemented in terms of the Map and Flatten functions.
+// See their respective documentation for more information.
+func FlatMap[A, B any](lst List[A], mapper Mapper[A, List[B]]) List[B] {
+	return Flatten(Map(lst, mapper))
 }
