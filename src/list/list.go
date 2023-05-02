@@ -45,6 +45,31 @@ func (lst *List[A]) ToSlice() []A {
 	return result
 }
 
+// Concat concatenates two lists and returns the resulting list.
+// If either list is nil or empty, it returns the other list.
+// The original lists are not modified.
+//
+// Time complexity: O(n), where n is the size of the first list.
+// Space complexity: O(n), where n is the size of the first list.
+//
+// Example:
+//
+//	lst1 := FromSlice([]int{1, 2, 3}) // creates a list [1, 2, 3]
+//	lst2 := FromSlice([]int{4, 5, 6}) // creates a list [4, 5, 6]
+//	lst3 := lst1.Concat(lst2)         // concatenates lst1 and lst2 into lst3
+//	result := lst3.ToSlice()          // returns [1, 2, 3, 4, 5, 6]
+//
+// TODO optimize to LogN
+func (lst *List[A]) Concat(other *List[A]) *List[A] {
+	if lst == nil || lst.size == 0 {
+		return other
+	}
+	if other == nil || other.size == 0 {
+		return lst
+	}
+	return &List[A]{x: lst.x, xs: lst.xs.Concat(other), size: lst.size + other.size}
+}
+
 // Append adds a new element to the end of the list and returns a new list.
 // If the list is empty (nil), a new list with the given value is returned.
 // Time Complexity: O(n), where n is the number of elements in the list.
@@ -98,29 +123,13 @@ func (lst *List[A]) AppendList(toAppend *List[A]) *List[A] {
 	return appendHelper(lst, toAppend)
 }
 
-// Concat concatenates two lists and returns the resulting list.
-// If either list is nil or empty, it returns the other list.
-// The original lists are not modified.
-//
-// Time complexity: O(n), where n is the size of the first list.
-// Space complexity: O(n), where n is the size of the first list.
-//
-// Example:
-//
-//	lst1 := FromSlice([]int{1, 2, 3}) // creates a list [1, 2, 3]
-//	lst2 := FromSlice([]int{4, 5, 6}) // creates a list [4, 5, 6]
-//	lst3 := lst1.Concat(lst2)         // concatenates lst1 and lst2 into lst3
-//	result := lst3.ToSlice()          // returns [1, 2, 3, 4, 5, 6]
-//
-// TODO optimize to LogN
-func (lst *List[A]) Concat(other *List[A]) *List[A] {
-	if lst == nil || lst.size == 0 {
-		return other
-	}
-	if other == nil || other.size == 0 {
-		return lst
-	}
-	return &List[A]{x: lst.x, xs: lst.xs.Concat(other), size: lst.size + other.size}
+// Prepend adds a new element to the beginning of the List and returns a new List
+// with the new element as the head and the original List as the tail.
+// The time complexity of this operation is O(1) since it only involves creating a new List node
+// with the new element and pointing it to the original List.
+// The new List has a size that is one greater than the original List.
+func (lst *List[A]) Prepend(value A) *List[A] {
+	return &List[A]{x: value, xs: lst}
 }
 
 // PrependList prepends a given list to the beginning of the current list.
@@ -145,15 +154,6 @@ func (lst *List[A]) PrependList(toPrepend *List[A]) *List[A] {
 	left, right := lst.Split(0)
 	// Concatenate the second list to the left side of the first list
 	return toPrepend.Concat(left).Concat(right)
-}
-
-// Prepend adds a new element to the beginning of the List and returns a new List
-// with the new element as the head and the original List as the tail.
-// The time complexity of this operation is O(1) since it only involves creating a new List node
-// with the new element and pointing it to the original List.
-// The new List has a size that is one greater than the original List.
-func (lst *List[A]) Prepend(value A) *List[A] {
-	return &List[A]{x: value, xs: lst}
 }
 
 // Split splits the list into two sub-lists.
