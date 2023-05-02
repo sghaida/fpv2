@@ -77,7 +77,6 @@ func (a List[A]) Take(n int) List[A] {
 // The `mapper` function takes an element of type `A` as input, and returns an element of type `B` as output.
 // The function returns a new list containing the mapped elements.
 //
-//
 // Example usage:
 // Given a list of integers, we can use the `Map` function to square each integer and create a new list of the squared values:
 //
@@ -175,4 +174,29 @@ func Flatten[A List[B], B any](lst List[A]) List[B] {
 // See their respective documentation for more information.
 func FlatMap[A, B any](lst List[A], mapper Mapper[A, List[B]]) List[B] {
 	return Flatten(Map(lst, mapper))
+}
+
+// Filter returns a new list containing only the elements of the input list that satisfy the given predicate function.
+// The predicate function takes an element of type A and returns true if the element should be included in the resulting list,
+// false otherwise.
+//
+// Example usage:
+//
+//	lst := List{1, 2, 3, 4, 5}
+//	predicate := func(x int) bool {
+//	    return x % 2 == 0
+//	}
+//	result := Filter(lst, predicate) // result = List{2, 4}
+//
+// The Filter function is implemented using a loop that iterates over each element of the input list and checks whether
+// the predicate function returns true for that element. If it does, the element is added to a new list that is returned
+// as the result of the function.
+func Filter[A any](lst List[A], predicate func(A) bool) List[A] {
+	var acc []A
+	for _, elm := range lst {
+		if predicate(elm) {
+			acc = append(acc, elm)
+		}
+	}
+	return acc
 }

@@ -25,7 +25,7 @@ The Library will Include `Mutable` and `Immutable` counterpart collections such 
   
   - [x] **_[MapIter](src/iter/map_iter.go)_**  `Next | HasNext | Count | Size | FromMap | ToMap | Fold | FoldLeft | Map | Reduce | FilterByKey | FilterByValue | Foreach | ContainsKey | ContainsValue | GroupByValue | Clone`
 
-- [x] **_[Slice Ops](src/collections/slice_ops.go)_** `Size | Take | Map | Reduce | FoldLeft | Append | Prepend | Foreach | Flatten | Flatmap`
+- [x] **_[Slice Ops](src/collections/slice_ops.go)_** `Size | Take | Map | Reduce | FoldLeft | Append | Prepend | Foreach | Flatten | Flatmap | Filter `
 
 - [ ] **_[List](src/list/list.go)_** `Size | Head | Tail | Append | Prepend | Split | reverse | At | AppendList | PrependList | Concat | String | Find | Map | Filter | Reduce | FoldLeft | ToSlice | FromSlice | Find`
 

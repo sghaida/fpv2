@@ -109,3 +109,32 @@ func TestFlatMap(t *testing.T) {
 	result := collections.FlatMap(lst, mapper)
 	assert.Equal(t, result, collections.List[int]{1, 2, 2, 4, 3, 6})
 }
+
+func TestFilter(t *testing.T) {
+	// Test case 1: Filter even numbers from a list of integers
+	lst1 := collections.List[int]{1, 2, 3, 4, 5}
+	predicate1 := func(x int) bool {
+		return x%2 == 0
+	}
+	expected1 := collections.List[int]{2, 4}
+	result1 := collections.Filter(lst1, predicate1)
+	assert.Equal(t, expected1, result1)
+
+	// Test case 2: Filter strings that start with the letter "a" from a list of strings
+	lst2 := collections.List[string]{"apple", "banana", "avocado", "pear"}
+	predicate2 := func(s string) bool {
+		return s[0] == 'a'
+	}
+	expected2 := collections.List[string]{"apple", "avocado"}
+	result2 := collections.Filter(lst2, predicate2)
+	assert.Equal(t, expected2, result2)
+
+	// Test case 3: Filter elements from an empty list
+	lst3 := collections.List[int]{}
+	predicate3 := func(x int) bool {
+		return x%2 == 0
+	}
+	expected3 := collections.List[int](nil)
+	result3 := collections.Filter(lst3, predicate3)
+	assert.Equal(t, expected3, result3)
+}
