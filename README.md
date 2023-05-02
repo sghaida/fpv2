@@ -23,6 +23,8 @@ The Library will Include `Mutable` and `Immutable` counterpart collections such 
 
 - [x] **_[List](src/collections/slice_ops.go)_** `Size | Take | Map | Reduce | FoldLeft | Append | Prepend | Foreach`
 
+- [ ] **_[List](src/list/list.go)_** `Size | Head | Tail | Append | Prepend | Split | Map | Filter | Reduce | FoldLeft | reverse | ToSlice | FromSlice | Find`
+
 - [ ] **_Mutable | Immutable Set_** `Iter | Foreach | Union | Intersect | Add | Remove | Diff | Clone | ToSlice |  Map | FlatMap |  Flatten | Fold | Reduce | Zip | Filter | Add | Remove`
 
 - [ ] **_Mutable | Immutable Array_** applies to `Slices | Arrays` with the following Operations `Iter | Foreach | Map | FlatMap |  Flatten | Fold | Reduce | Zip | ZipWithIndex | Filter | GroupBy | Head | Tail | AddAtIndex | Append | Prepend | ToMap | Clone`
