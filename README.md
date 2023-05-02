@@ -23,7 +23,7 @@ The Library will Include `Mutable` and `Immutable` counterpart collections such 
 
 - [x] **_[List](src/collections/slice_ops.go)_** `Size | Take | Map | Reduce | FoldLeft | Append | Prepend | Foreach`
 
-- [ ] **_[List](src/list/list.go)_** `Size | Head | Tail | Append | Prepend | Split | Map | Filter | Reduce | FoldLeft | reverse | ToSlice | FromSlice | Find`
+- [ ] **_[List](src/list/list.go)_** `Size | Head | Tail | Append | Prepend | Split | reverse | At | Map | Filter | Reduce | FoldLeft | ToSlice | FromSlice | Find`
 
 - [ ] **_Mutable | Immutable Set_** `Iter | Foreach | Union | Intersect | Add | Remove | Diff | Clone | ToSlice |  Map | FlatMap |  Flatten | Fold | Reduce | Zip | Filter | Add | Remove`
 

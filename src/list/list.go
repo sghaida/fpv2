@@ -56,6 +56,36 @@ func (lst *List[A]) Split(n int) (*List[A], *List[A]) {
 	return left, right
 }
 
+// Reverse reverses the order of the List O(N)
+func (lst *List[A]) Reverse() *List[A] {
+	reversed := &List[A]{}
+	return lst.reverse(reversed)
+}
+
+func (lst *List[A]) reverse(acc *List[A]) *List[A] {
+	if lst == nil {
+		return acc
+	}
+	return lst.xs.reverse(&List[A]{x: lst.x, xs: acc, size: lst.size})
+}
+
+// At return the List at specific index O(Log(N))
+func (lst *List[A]) At(index int) (A, bool) {
+	var zero A
+	if lst == nil || index < 0 || index >= lst.size {
+		return zero, false
+	}
+
+	var helper func(*List[A], int) (A, bool)
+	helper = func(l *List[A], i int) (A, bool) {
+		if i == 0 {
+			return l.x, true
+		}
+		return helper(l.xs, i-1)
+	}
+	return helper(lst, index)
+}
+
 // Head return the head element in the List
 func (lst *List[A]) Head() A {
 	return lst.x

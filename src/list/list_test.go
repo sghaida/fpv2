@@ -42,5 +42,26 @@ func TestList_Split(t *testing.T) {
 	lst2 := (*list.List[int])(nil)
 	left, right = lst2.Split(5)
 	assert.Equal(t, left.Size(), 0)
+}
 
+func TestList_Reverse(t *testing.T) {
+	lst := list.FromSlice([]int{1, 2, 3, 4, 5, 6})
+	reversed := lst.Reverse()
+	assert.Equal(t, reversed.Head(), 6)
+}
+
+func TestList_At(t *testing.T) {
+	lst := list.FromSlice([]int{0, 1, 2, 3, 4, 5})
+	for index, _ := range []int{0, 1, 2, 3, 4, 5} {
+		value, ok := lst.At(index)
+		assert.True(t, ok)
+		assert.Equal(t, value, index)
+	}
+	value, ok := lst.At(10)
+	assert.False(t, ok)
+	assert.Equal(t, value, 0)
+
+	value, ok = lst.At(-1)
+	assert.False(t, ok)
+	assert.Equal(t, value, 0)
 }
