@@ -253,6 +253,7 @@ func (lst *List[A]) Size() int {
 	return lst.size
 }
 
+// String give string representation of the List
 func (lst *List[A]) String() string {
 	if lst == nil || lst.size == 0 {
 		return "[]"
