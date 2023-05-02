@@ -33,7 +33,7 @@ func TestList_Split(t *testing.T) {
 
 	left, right = lst.Split(10)
 	assert.Equal(t, left.Size(), 6)
-	assert.Equal(t, right, (*list.List[int])(nil))
+	assert.Equal(t, right, &list.List[int]{})
 
 	var lst1 list.List[int]
 	left, right = lst1.Split(5)
@@ -64,4 +64,51 @@ func TestList_At(t *testing.T) {
 	value, ok = lst.At(-1)
 	assert.False(t, ok)
 	assert.Equal(t, value, 0)
+}
+
+func TestList_AppendList(t *testing.T) {
+	lst := list.FromSlice([]int{0, 1, 2, 3, 4, 5})
+	appended := lst.AppendList(nil)
+	assert.Equal(t, lst.Size(), 6)
+
+	appended = lst.AppendList(list.FromSlice([]int{6, 7, 8}))
+	assert.Equal(t, appended.Size(), 9)
+
+	lst = list.FromSlice([]int{})
+	appended = lst.AppendList(list.FromSlice([]int{1, 2, 3}))
+	assert.Equal(t, appended.Size(), 3)
+}
+
+func TestList_Concat(t *testing.T) {
+	lst := list.FromSlice([]int{0, 1, 2, 3, 4, 5})
+	c1 := lst.Concat(nil)
+	assert.Equal(t, c1.Size(), 6)
+
+	c2 := lst.Concat(list.FromSlice([]int{6, 7, 8}))
+	assert.Equal(t, c2.Size(), 9)
+
+	lst = list.FromSlice([]int{})
+	c3 := lst.Concat(list.FromSlice([]int{1, 2, 3}))
+	assert.Equal(t, c3.Size(), 3)
+}
+
+func TestList_PrependList(t *testing.T) {
+	lst := list.FromSlice([]int{0, 1, 2, 3, 4, 5})
+	appended := lst.PrependList(nil)
+	assert.Equal(t, lst.Size(), 6)
+
+	appended = lst.PrependList(list.FromSlice([]int{6, 7, 8}))
+	assert.Equal(t, appended.Size(), 9)
+
+	lst = list.FromSlice([]int{})
+	appended = lst.PrependList(list.FromSlice([]int{1, 2, 3}))
+	assert.Equal(t, appended.Size(), 3)
+}
+
+func TestList_String(t *testing.T) {
+	lst := list.FromSlice([]int{0, 1, 2, 3})
+	assert.Equal(t, lst.String(), "[0, 1, 2, 3]")
+
+	lst = list.FromSlice([]int{})
+	assert.Equal(t, lst.String(), "[]")
 }
