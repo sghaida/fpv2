@@ -120,6 +120,12 @@ func TestList_Filter(t *testing.T) {
 		return value%2 == 0
 	})
 	assert.Equal(t, res.Size(), 2)
+
+	lst = list.FromSlice([]int{})
+	res = lst.Filter(func(value int) bool {
+		return value%2 == 0
+	})
+	assert.Equal(t, res.Size(), 0)
 }
 
 func TestMap(t *testing.T) {
@@ -129,4 +135,12 @@ func TestMap(t *testing.T) {
 	})
 	assert.Equal(t, mapped.Size(), 4)
 	assert.Equal(t, mapped.Head(), "0")
+
+	lst = list.FromSlice([]int{})
+	mapped = list.Map[int, string](lst, func(value int) string {
+		return strconv.Itoa(value)
+	})
+	assert.Equal(t, mapped.Size(), 0)
+	assert.Equal(t, mapped.Head(), "")
+
 }

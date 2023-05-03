@@ -285,6 +285,9 @@ func (lst *List[A]) String() string {
 // result := lst.Filter(fn)
 // // result is &List[int]{x: 2, xs: nil}
 func (lst *List[A]) Filter(fn func(value A) bool) *List[A] {
+	if lst == nil || lst.size == 0 {
+		return &List[A]{}
+	}
 	var acc *List[A]
 	if ok := fn(lst.Head()); ok {
 		acc = acc.Append(lst.Head())
@@ -316,6 +319,9 @@ func (lst *List[A]) Filter(fn func(value A) bool) *List[A] {
 // result := Map(lst, fn)
 // // result is &List[int]{x: 1, xs: &List[int]{x: 4, xs: &List[int]{x: 9, xs: nil}}}
 func Map[A, B any](lst *List[A], fn func(value A) B) *List[B] {
+	if lst == nil || lst.size == 0 {
+		return &List[B]{}
+	}
 	acc := &List[B]{x: fn(lst.Head()), size: 1}
 	p := lst
 	for p.Tail() != nil {
