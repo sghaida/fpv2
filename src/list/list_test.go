@@ -3,6 +3,7 @@ package list_test
 import (
 	"fp/src/list"
 	"github.com/stretchr/testify/assert"
+	"strconv"
 	"testing"
 )
 
@@ -111,4 +112,21 @@ func TestList_String(t *testing.T) {
 
 	lst = list.FromSlice([]int{})
 	assert.Equal(t, lst.String(), "[]")
+}
+
+func TestList_Filter(t *testing.T) {
+	lst := list.FromSlice([]int{0, 1, 2, 3})
+	res := lst.Filter(func(value int) bool {
+		return value%2 == 0
+	})
+	assert.Equal(t, res.Size(), 2)
+}
+
+func TestMap(t *testing.T) {
+	lst := list.FromSlice([]int{0, 1, 2, 3})
+	mapped := list.Map[int, string](lst, func(value int) string {
+		return strconv.Itoa(value)
+	})
+	assert.Equal(t, mapped.Size(), 4)
+	assert.Equal(t, mapped.Head(), "0")
 }

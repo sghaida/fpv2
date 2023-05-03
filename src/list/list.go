@@ -7,7 +7,7 @@ import (
 )
 
 // List ...
-type List[A comparable] struct {
+type List[A any] struct {
 	x    A
 	xs   *List[A]
 	size int
@@ -267,4 +267,60 @@ func (lst *List[A]) String() string {
 	}
 	b.WriteRune(']')
 	return b.String()
+}
+
+// Filter returns a new list with the elements from the input list lst
+// that satisfy the predicate fn.
+//
+// Time complexity: O(n), where n is the length of the input list lst.
+// Filter applies the predicate fn to each element of lst exactly once.
+//
+// Space complexity: O(m), where m is the number of elements in the output list.
+// Filter creates a new list with at most m elements, where m <= n.
+//
+// Example:
+//
+// lst := &List[int]{x: 1, xs: &List[int]{x: 2, xs: &List[int]{x: 3, xs: nil}}}
+// fn := func(x int) bool { return x % 2 == 0 }
+// result := lst.Filter(fn)
+// // result is &List[int]{x: 2, xs: nil}
+func (lst *List[A]) Filter(fn func(value A) bool) *List[A] {
+	var acc *List[A]
+	if ok := fn(lst.Head()); ok {
+		acc = acc.Append(lst.Head())
+	}
+	p := lst
+	for p.Tail() != nil {
+		if ok := fn(p.Tail().Head()); ok {
+			acc = acc.Append(p.Tail().Head())
+		}
+		p = p.Tail()
+	}
+	return acc
+}
+
+// Map applies a function fn to each element of the input list lst
+// and returns a new list with the transformed elements.
+// The input list lst is not modified.
+//
+// Time complexity: O(n), where n is the length of the input list lst.
+// Map applies fn to each element of lst exactly once.
+//
+// Space complexity: O(n), where n is the length of the input list lst.
+// Map creates a new list with the transformed elements, which has the same length as lst.
+//
+// Example:
+//
+// lst := &List[int]{x: 1, xs: &List[int]{x: 2, xs: &List[int]{x: 3, xs: nil}}}
+// fn := func(x int) int { return x * x }
+// result := Map(lst, fn)
+// // result is &List[int]{x: 1, xs: &List[int]{x: 4, xs: &List[int]{x: 9, xs: nil}}}
+func Map[A, B any](lst *List[A], fn func(value A) B) *List[B] {
+	acc := &List[B]{x: fn(lst.Head()), size: 1}
+	p := lst
+	for p.Tail() != nil {
+		acc = acc.Append(fn(p.Tail().Head()))
+		p = p.Tail()
+	}
+	return acc
 }
