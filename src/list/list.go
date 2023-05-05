@@ -1,4 +1,6 @@
-// Package list ...
+// Package list functional implementation of List with Head and tail using LinkedList
+// It supports all the Basic Functionalities such as
+// Append, AppendList, Prepend, PrependList, At, Concat, Split, Reverse, Filter, Map, Head, Tail, Size
 package list
 
 import (
