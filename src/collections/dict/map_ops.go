@@ -4,6 +4,7 @@ import (
 	"fp/src/collections/list"
 )
 
+// Dict is a type alias for map
 type Dict[A comparable, B any] map[A]B
 
 // Ops is an interface that defines a set of operations that can be performed on a Dict of elements of type A.
