@@ -1,24 +1,15 @@
-// Package collections ...
-package collections
+// Package list ...
+package list
+
+import "fp/src/collections"
 
 // List is a type alias for a slice of elements of type A.
 // The `A` type parameter specifies the type of elements that the slice can hold.
 type List[A any] []A
 
-// Reducer is a type that represents a function that reduces a list of values of type A to a single value of type B.
-// The `acc` parameter represents the accumulated value, and `value` represents the current value being processed.
-// The function returns the updated accumulated value after processing the current value.
-// The types of `A` and `B` are specified using Go's `any` keyword, allowing for any type to be used.
-type Reducer[A, B any] func(acc B, value A) B
-
-// Mapper is a type that represents a function that maps an input value of type A to an output value of type B.
-// The `elm` parameter represents the input value to be mapped, and the function returns the corresponding output value.
-// The types of `A` and `B` are specified using Go's `any` keyword, allowing for any type to be used.
-type Mapper[A, B any] func(elm A) B
-
-// ListOps is an interface that defines a set of operations that can be performed on a list of elements of type A.
+// Ops is an interface that defines a set of operations that can be performed on a list of elements of type A.
 // The `A` type parameter specifies the type of elements that the list can hold.
-type ListOps[A any] interface {
+type Ops[A any] interface {
 	// Size returns the number of elements in the list.
 	Size() int
 	// Foreach applies the given function `fn` to each element in the list.
@@ -84,7 +75,7 @@ func (a List[A]) Take(n int) List[A] {
 //	mapper := func(elm int) int { return elm * elm }
 //	output := Map(input, mapper)
 //	// Output: List[int]{1, 4, 9, 16, 25}
-func Map[A, B any](lst List[A], mapper Mapper[A, B]) List[B] {
+func Map[A, B any](lst List[A], mapper collections.Mapper[A, B]) List[B] {
 	acc := make([]B, 0, len(lst))
 	for _, elm := range lst {
 		acc = append(acc, mapper(elm))
@@ -106,7 +97,7 @@ func Map[A, B any](lst List[A], mapper Mapper[A, B]) List[B] {
 //	reducer := func(acc int, elm int) int { return acc + elm }
 //	output := Reduce(input, reducer)
 //	// Output: 15
-func Reduce[A, B any](lst List[A], reducer Reducer[A, B]) B {
+func Reduce[A, B any](lst List[A], reducer collections.Reducer[A, B]) B {
 	var acc B
 	return FoldLeft(lst, acc, reducer)
 }
@@ -127,7 +118,7 @@ func Reduce[A, B any](lst List[A], reducer Reducer[A, B]) B {
 //	reducer := func(acc int, elm int) int { return acc * elm }
 //	output := FoldLeft(input, 1, reducer)
 //	// Output: 120
-func FoldLeft[A, B any](lst List[A], acc B, fn Reducer[A, B]) B {
+func FoldLeft[A, B any](lst List[A], acc B, fn collections.Reducer[A, B]) B {
 	for _, value := range lst {
 		acc = fn(acc, value)
 	}
@@ -172,7 +163,7 @@ func Flatten[A List[B], B any](lst List[A]) List[B] {
 //
 // The FlatMap function is implemented in terms of the Map and Flatten functions.
 // See their respective documentation for more information.
-func FlatMap[A, B any](lst List[A], mapper Mapper[A, List[B]]) List[B] {
+func FlatMap[A, B any](lst List[A], mapper collections.Mapper[A, List[B]]) List[B] {
 	return Flatten(Map(lst, mapper))
 }
 

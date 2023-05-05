@@ -27,9 +27,9 @@ The Library will Include `Mutable` and `Immutable` counterpart collections such 
 
 - [ ] **_[Collections](src/collections)_**
   
-  - [x] **_[Slice Ops](src/collections/slice_ops.go)_** `Size | Take | Map | Reduce | FoldLeft | Append | Prepend | Foreach | Flatten | Flatmap | Filter `
+  - [x] **_[Slice Ops](src/collections/list/slice_ops.go)_** `Size | Take | Map | Reduce | FoldLeft | Append | Prepend | Foreach | Flatten | Flatmap | Filter `
   
-  - [ ] **_[Map Ops](src/collections/map_ops.go)_** `Size | Take | Map | Reduce | FoldLeft | Append | Prepend | Foreach | Flatten | Flatmap | Filter`
+  - [x] **_[Map Ops](src/collections/dict/map_ops.go)_** `Size | Map | FoldLeft | Add | remove | Foreach | Contains | Keys | Values | KeysValues`
 
 - [ ] **_[List](src/list/list.go)_** `Size | Head | Tail | Append | Prepend | Split | reverse | At | AppendList | PrependList | Concat | String | Find | Map | Filter | Reduce | FoldLeft | ToSlice | FromSlice | Find`
 
