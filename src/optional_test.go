@@ -3,7 +3,7 @@ package src
 import (
 	"crypto/sha1"
 	"fmt"
-	"fp/src/utils"
+	"github.com/sghaida/fpv2/src/utils"
 	"github.com/stretchr/testify/assert"
 	"strconv"
 	"testing"

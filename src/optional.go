@@ -4,7 +4,7 @@ package src
 import (
 	"errors"
 	"fmt"
-	"fp/src/utils"
+	"github.com/sghaida/fpv2/src/utils"
 )
 
 // Type : SomeType | NoneType

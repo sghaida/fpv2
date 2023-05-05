@@ -1,7 +1,7 @@
 package list_test
 
 import (
-	"fp/src/list"
+	"github.com/sghaida/fpv2/src/list"
 	"github.com/stretchr/testify/assert"
 	"strconv"
 	"testing"
@@ -53,7 +53,7 @@ func TestList_Reverse(t *testing.T) {
 
 func TestList_At(t *testing.T) {
 	lst := list.FromSlice([]int{0, 1, 2, 3, 4, 5})
-	for index, _ := range []int{0, 1, 2, 3, 4, 5} {
+	for index := range []int{0, 1, 2, 3, 4, 5} {
 		value, ok := lst.At(index)
 		assert.True(t, ok)
 		assert.Equal(t, value, index)

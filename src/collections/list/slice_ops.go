@@ -1,7 +1,7 @@
 // Package list ...
 package list
 
-import "fp/src/collections"
+import "github.com/sghaida/fpv2/src/collections"
 
 // List is a type alias for a slice of elements of type A.
 // The `A` type parameter specifies the type of elements that the slice can hold.

@@ -1,7 +1,7 @@
 package list_test
 
 import (
-	"fp/src/collections/list"
+	"github.com/sghaida/fpv2/src/collections/list"
 	"github.com/stretchr/testify/assert"
 	"strconv"
 	"testing"

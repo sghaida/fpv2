@@ -3,7 +3,7 @@ package src
 
 import (
 	"errors"
-	"fp/src/utils"
+	"github.com/sghaida/fpv2/src/utils"
 )
 
 // TODO Add String

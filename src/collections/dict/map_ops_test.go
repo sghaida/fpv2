@@ -1,7 +1,7 @@
 package dict_test
 
 import (
-	"fp/src/collections/dict"
+	"github.com/sghaida/fpv2/src/collections/dict"
 	"github.com/stretchr/testify/assert"
 	"strconv"
 	"testing"

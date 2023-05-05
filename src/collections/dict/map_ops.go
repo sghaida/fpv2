@@ -1,7 +1,7 @@
 package dict
 
 import (
-	"fp/src/collections/list"
+	"github.com/sghaida/fpv2/src/collections/list"
 )
 
 // Dict is a type alias for map
