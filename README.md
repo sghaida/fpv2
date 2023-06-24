@@ -1,7 +1,6 @@
 # Go Functional Library
 [![ci](https://github.com/sghaida/fpv2/actions/workflows/ci.yaml/badge.svg)](https://github.com/sghaida/fpv2/actions/workflows/ci.yaml)
 [![GitHub Clones](https://img.shields.io/badge/dynamic/json?color=success&label=Clone&query=count&url=https://gist.githubusercontent.com/sghaida/ddd9cdd153e34bb1f895e0a5b5128ebd/raw/clone.json&logo=github)](https://github.com/MShawon/github-clone-count-badge)
-
 [![codecov](https://codecov.io/gh/sghaida/fpv2/branch/main/graph/badge.svg?token=T7LTPQKQIR)](https://codecov.io/gh/sghaida/fpv2)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/2d9baa3db6cb4f9db65020013632dc1a)](https://app.codacy.com/gh/sghaida/fpv2/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
